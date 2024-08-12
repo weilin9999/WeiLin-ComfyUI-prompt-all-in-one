@@ -12,6 +12,10 @@
 
 > 2.2.0 版本介绍 </br>1. 修复了已知 BUG</br>2. 更新了新的功能：全局提示词 UI、放大窗口功能
 
+# Lora提示词写法提示
+<lora:xxxx:0.3:0.4>这种写法解释 0.3是模型强度 0.4是CLIP强度
+如果你是<lora:xxxx:0.4>那么这种写法解释 模型强度和CLIP强度都是0.4
+
 # 概要说明
 
 本项目是从 sd-webui-prompt-all-in-one-app: https://github.com/Physton/sd-webui-prompt-all-in-one-app 项目上修改出来的 ComfyUI 版本，但对原作者的项目有所修改，请大家到本项目的 release 下载！！！
