@@ -12,6 +12,10 @@
 
 > 2.2.0 Version </br>1. Fixed known bug</br>2. Updated with new features: Global Prompt UI, Enlarge Window function
 
+# Lora tips Word writing tips
+<lora:xxxx:0.3:0.4> This formulation explains that 0.3 is the model strength and 0.4 is the CLIP strength
+If you are <lora:xxxx:0.4> then this interpretation of the model strength and CLIP strength are both 0.4
+
 # Summary
 
 This project is from sd-webui-prompt-all-in-one-app: https://github.com/Physton/sd-webui-prompt-all-in-one-app The project was modified ComfyUI version，However, there are modifications to the original author's project，Please go to the release of this project to download！！！
