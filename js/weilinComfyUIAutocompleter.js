@@ -326,7 +326,7 @@ function initComplete() {
 	TextAreaAutoComplete.globalSeparator = localStorage.getItem(id + ".AutoSeparate") ?? ", ";
 	const enabledSetting = app.ui.settings.addSetting({
 		id,
-		name: "🐍 Text Autocomplete",
+		name: "WeiLin 提示词补全设置 Text Autocomplete",
 		defaultValue: true,
 		type: (name, setter, value) => {
 			return $el("tr", [
@@ -340,7 +340,7 @@ function initComplete() {
 					$el(
 						"label",
 						{
-							textContent: "Enabled ",
+							textContent: "启用 Enabled ",
 							style: {
 								display: "block",
 							},
@@ -362,7 +362,7 @@ function initComplete() {
 						"label.comfy-tooltip-indicator",
 						{
 							title: "This requires other ComfyUI nodes/extensions that support using LoRAs in the prompt.",
-							textContent: "Loras enabled ",
+							textContent: "Loras 启用 Loras enabled ",
 							style: {
 								display: "block",
 							},
@@ -383,7 +383,7 @@ function initComplete() {
 					$el(
 						"label",
 						{
-							textContent: "Auto-insert comma ",
+							textContent: "自动逗号 Auto-insert comma ",
 							style: {
 								display: "block",
 							},
@@ -403,7 +403,7 @@ function initComplete() {
 					$el(
 						"label",
 						{
-							textContent: "Replace _ with space ",
+							textContent: "将_替换为空格 Replace _ with space ",
 							style: {
 								display: "block",
 							},
@@ -423,7 +423,7 @@ function initComplete() {
 					$el(
 						"label",
 						{
-							textContent: "Insert suggestion on: ",
+							textContent: "插入方式 Insert suggestion on: ",
 							style: {
 								display: "block",
 							},
@@ -432,7 +432,7 @@ function initComplete() {
 							$el(
 								"label",
 								{
-									textContent: "Tab",
+									textContent: "Tab 按键",
 									style: {
 										display: "block",
 										marginLeft: "20px",
@@ -453,7 +453,7 @@ function initComplete() {
 							$el(
 								"label",
 								{
-									textContent: "Enter",
+									textContent: "Enter 按键",
 									style: {
 										display: "block",
 										marginLeft: "20px",
@@ -476,7 +476,7 @@ function initComplete() {
 					$el(
 						"label",
 						{
-							textContent: "Max suggestions: ",
+							textContent: "最大显示条数 Max suggestions: ",
 							style: {
 								display: "block",
 							},
@@ -497,7 +497,7 @@ function initComplete() {
 						]
 					),
 					$el("button", {
-						textContent: "Manage Custom Words",
+						textContent: "管理自定义词汇（很卡不建议打开） Manage Custom Words",
 						onclick: () => {
 							app.ui.settings.element.close();
 							new CustomWordsDialog().show();
@@ -523,7 +523,9 @@ function initComplete() {
 
 app.registerExtension({
 	name: id,
-	init(){},
+	init(){
+		initComplete()
+	},
 	setup() {
 		async function addEmbeddings() {
 			const embeddings = await api.getEmbeddings();
@@ -588,47 +590,32 @@ app.registerExtension({
 
 		if(!onlyOne){
 			onlyOne = true
-			let isLoad1 = false
-			let isLoad2 = false
-			let isLoad3 = false
 			document.addEventListener('weilinInitCompleteGreatPrompt', e => {
 				const iframeBox = document.getElementById("weilin_prompt_great_box")
+				const Inselement1 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_great_ins_autocom")
+				const Inselement2 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_neg_ins_autocom")
 				const element1 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_text_input")
 				const element2 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_text_neg_input")
-				new TextAreaAutoComplete(element1,iframeBox)
-				new TextAreaAutoComplete(element2,iframeBox)
-				if(!isLoad1){
-					isLoad1 = true
-					if(isLoad1 && isLoad2 && isLoad3){
-						initComplete()
-					}
-				}
+				new TextAreaAutoComplete(element1,iframeBox,Inselement1)
+				new TextAreaAutoComplete(element2,iframeBox,Inselement2)
 			}, false);
 			document.addEventListener('weilinInitCompleteNegPrompt', e => {
 				const iframeBox = document.getElementById("weilin_prompt_neg_box")
+				const Inselement1 = window.frames['weilin_prompt_neg_box'].document.getElementById("weilin_prompt_great_ins_autocom")
+				const Inselement2 = window.frames['weilin_prompt_neg_box'].document.getElementById("weilin_prompt_neg_ins_autocom")
 				const element3 = window.frames['weilin_prompt_neg_box'].document.getElementById("weilin_prompt_text_input")
 				const element4 = window.frames['weilin_prompt_neg_box'].document.getElementById("weilin_prompt_text_neg_input")
-				new TextAreaAutoComplete(element3,iframeBox)
-				new TextAreaAutoComplete(element4,iframeBox)
-				if(!isLoad2){
-					isLoad2 = true
-					if(isLoad1 && isLoad2 && isLoad3){
-						initComplete()
-					}
-				}
+				new TextAreaAutoComplete(element3,iframeBox,Inselement1)
+				new TextAreaAutoComplete(element4,iframeBox,Inselement2)
 			}, false);
-			document.addEventListener('weilinInitCompleteNegPrompt', e => {
+			document.addEventListener('weilinInitCompleteGlobalPrompt', e => {
 				const iframeBox = document.getElementById("weilin_prompt_global_box")
+				const Inselement1 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_great_ins_autocom")
+				const Inselement2 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_neg_ins_autocom")
 				const element1 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_text_input")
 				const element2 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_text_neg_input")
-				new TextAreaAutoComplete(element1,iframeBox)
-				new TextAreaAutoComplete(element2,iframeBox)
-				if(!isLoad3){
-					isLoad3 = true
-					if(isLoad1 && isLoad2 && isLoad3){
-						initComplete()
-					}
-				}
+				new TextAreaAutoComplete(element1,iframeBox,Inselement1)
+				new TextAreaAutoComplete(element2,iframeBox,Inselement2)
 			}, false);
 		}
 

@@ -31,7 +31,7 @@ app.registerExtension({
           class="weilin_iframe_box"
           id='weilin_prompt_great_box'
           name='weilin_prompt_great_box'
-          src='./weilin/web_ui/index.html?type=greate_prompt&refid=${global_randomID}&__theme=${ui_theme}'
+          src=''
           frameborder='0'
           scrolling='on'
           >
@@ -51,21 +51,20 @@ app.registerExtension({
 
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
     // console.log(app)
-    if (nodeData.name === "WeiLinComfyUIPromptAllInOneGreat") {
+    if (nodeData.name === "WeiLinComfyUIPromptAllInOneGreat" || nodeData.name === "WeiLinComfyUIPromptAllInOneGreatLoras") {
       // console.log(nodeData)
       // Create node
       const onNodeCreated = nodeType.prototype.onNodeCreated;
       nodeType.prototype.onNodeCreated = async function () {
-        const r = onNodeCreated
-          ? onNodeCreated.apply(this, arguments)
-          : undefined;
+          const r = onNodeCreated ? onNodeCreated.apply(this, arguments): undefined;
 
-        let EasyCaptureNode = app.graph._nodes.filter(
-            (wi) => wi.type == "WeiLinComfyUIPromptAllInOneGreat"
+          let EasyCaptureNode = app.graph._nodes.filter(
+            (wi) => (wi.type == "WeiLinComfyUIPromptAllInOneGreat" || wi.type == "WeiLinComfyUIPromptAllInOneGreatLoras")
           );
 
           let thisInputElement = null
           let randomID = ''
+          let isFirstOpen = false
 
           this.addWidget("button", "打开可视化WeiLin PromptUI", '', ($e) => {
             randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
@@ -99,6 +98,12 @@ app.registerExtension({
                 const theme_type =  searchParams.get("__theme")
                 // console.log(ui_theme.toString() , theme_type.toString() )
                 if(String(ui_theme)  != String(theme_type) ){
+                  iframeEle.src = `./weilin/web_ui/index.html?type=greate_prompt&refid=${global_randomID}&__theme=${ui_theme}`
+                }
+
+                if(!isFirstOpen){
+                  isFirstOpen = true
+                  localStorage.setItem("weilin_prompt_onfirst", 1);
                   iframeEle.src = `./weilin/web_ui/index.html?type=greate_prompt&refid=${global_randomID}&__theme=${ui_theme}`
                 }
 

@@ -7,7 +7,29 @@ let global_randomID = (Math.random() + new Date().getTime()).toString(32).slice(
 app.registerExtension({
   name: "weilin.prompt_global",
   
-  async init(app) {
+  async init() {
+
+    let getSettingChangUI = localStorage.getItem("weilin_prompt_ui_change_close")
+    if(getSettingChangUI == null || getSettingChangUI.length <= 0){
+        localStorage.setItem("weilin_prompt_ui_change_close",false)
+        getSettingChangUI = false
+    }
+    // 加载设置
+    app.ui.settings.addSetting({
+        id: "weilin.prompt_global.changeClose",
+        name: "WeiLin PromptUI -- 调整PromptUI的关闭按钮在右边 Change PromptUI close button is on the right",
+        type: "boolean",
+		defaultValue: getSettingChangUI,
+		onChange: function(value) {
+            localStorage.setItem("weilin_prompt_ui_change_close",value)
+            getSettingChangUI = value
+            for (let index = 0; index < window.length; index++) {
+                window[index].postMessage({handel: 'changeSettingWeilinPromptUIChangeClose',value:value }, "*");
+            }
+        }
+    });
+
+
     // 全局唯一
     const style = document.createElement("style");
     style.innerText = `
@@ -139,7 +161,7 @@ app.registerExtension({
                 class="weilin_iframe_box"
                 id='weilin_prompt_global_box'
                 name='weilin_prompt_global_box'
-                src='./weilin/web_ui/index.html?type=global_prompt&refid=${global_randomID}&__theme=${ui_theme}'
+                src=''
                 frameborder='0'
                 scrolling='on'
             >
@@ -165,6 +187,7 @@ app.registerExtension({
         let thisInputGreatElement = document.getElementById("weilin_global_great_prompt_input")
         let thisInputNegElement = document.getElementById("weilin_global_neg_prompt_input")
         let randomID = ''
+        let isFirstOpen = false
 
         document.addEventListener("openWeilinGlobalPromptBox", function (event) {
             randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
@@ -191,6 +214,11 @@ app.registerExtension({
             const theme_type =  searchParams.get("__theme")
             // console.log(ui_theme.toString() , theme_type.toString() )
             if(String(ui_theme)  != String(theme_type) ){
+                iframeEle.src = `./weilin/web_ui/index.html?type=global_prompt&refid=${global_randomID}&__theme=${ui_theme}`
+            }
+
+            if(!isFirstOpen){
+                isFirstOpen = true
                 iframeEle.src = `./weilin/web_ui/index.html?type=global_prompt&refid=${global_randomID}&__theme=${ui_theme}`
             }
 

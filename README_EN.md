@@ -4,11 +4,13 @@
 
 </div>
 
-# WeiLin-ComfyUI-Prompt-all-in-one
+# Version update introduction
 
-WeiLin-ComfyUI-Prompt-all-in-one ComfyUI version prompt-all-in-one，In the based on sd-webui-prompt-all-in-one-app Modified from the project ComfyUI version，It only needs to be in ComfyUI to add this project ComfyUI node is available for visualization tag editor.
+> 2.4.0 Version</br>1. Fixed the BUG of prompt word completion </br>2. The NSFW prompt glossary is added only in Chinese </br>3. Added automatic loading of Lora prompt words. You only need to add Lora in PromptUI, which is the same as that in WebUI </br>4. In the setting of ComfyUI, you can change the "Off" button of PromptUI to the right
 
-If you like this project, get a star!
+> 2.3.0 Version</br>1. Added prompt word completion
+
+> 2.2.0 Version </br>1. Fixed known bug</br>2. Updated with new features: Global Prompt UI, Enlarge Window function
 
 # Summary
 
@@ -31,6 +33,10 @@ Use it as follows
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/2.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/3.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/4.png)
+
+# WeiLin-ComfyUI-Prompt-all-in-one Reference project
+
+WeiLin-ComfyUI-Prompt-all-in-one The ComfyUI version of prompt-all-in-one, a ComfyUI version modified based on the SD-wewe-prompt-all-in-one-app project, Just add the ComfyUI node of the project to ComfyUI to use the visual tag editor. Cue word completion using the https://github.com/pythongosssss/ComfyUI-Custom-Scripts project changes only the function of the completion and make the changes
 
 # A brief description of this item
 

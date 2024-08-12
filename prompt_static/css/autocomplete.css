@@ -1,6 +1,6 @@
 .weilin-autocom-autocomplete {
-	color: var(--pp-ph-phe-ec-extendBtnGroup-color);
-	background-color: var(--pp-ph-phe-ec-selectSelectBtn-background);
+	color: var(--descrip-text);
+	background-color: var(--comfy-menu-bg);
 	position: absolute;
 	font-family: sans-serif;
 	box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);

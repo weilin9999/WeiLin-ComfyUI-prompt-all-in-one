@@ -372,6 +372,8 @@ export class TextAreaAutoComplete {
 	el;
 	/** @type {HTMLTextAreaElement} */
 	iframe;
+	/** @type {HTMLTextAreaElement} */
+	insEl;
 
 	/** @type {Record<string, AutoCompleteEntry>} */
 	overrideWords;
@@ -388,9 +390,10 @@ export class TextAreaAutoComplete {
 	/**
 	 * @param {HTMLTextAreaElement} el
 	 */
-	constructor(el, iframe, words = null, separator = null) {
+	constructor(el, iframe, insEl, words = null, separator = null) {
 		this.el = el;
 		this.iframe = iframe;
+		this.insEl = insEl;
 		this.helper = new TextAreaCaretHelper(el, () => app.canvas.ds.scale);
 		this.dropdown = $el("div.weilin-autocom-autocomplete");
 		this.overrideWords = words;
@@ -649,14 +652,21 @@ export class TextAreaAutoComplete {
 		this.dropdown.replaceChildren(...items);
 
 		if (!this.dropdown.parentElement) {
-			document.body.append(this.dropdown);
+			// document.body.append(this.dropdown);
+			this.insEl.append(this.dropdown);
 		}
+		this.dropdown.style.position = "static";
+		this.dropdown.style.zIndex = "99";
+		this.dropdown.style.backgroundColor = "var(--pp-ph-phe-ec-selectSelectBtn-background)";
+		this.dropdown.style.color = "var(--pp-ph-phe-ec-extendBtnGroup-color)";
+
 
 		const position = this.helper.getCursorOffset();
 		// this.dropdown.style.left = (position.left ?? 0) + "px";
 		// this.dropdown.style.top = (position.top ?? 0) + "px";
-		this.dropdown.style.left = (this.el.offsetLeft + this.iframe.offsetLeft)+ "px";
-		this.dropdown.style.top =  (this.el.offsetTop +  this.el.clientHeight + this.iframe.offsetTop)+ "px";
+		// this.dropdown.style.left = (this.el.offsetLeft + this.iframe.offsetLeft)+ "px";
+		// this.dropdown.style.top =  (this.el.offsetTop +  this.el.clientHeight + this.iframe.offsetTop)+ "px";
+		// console.log(this.iframe.contentWindow.document.body.scrollTop,)
 		// console.log(this.dropdown.style.top)
 		this.dropdown.style.maxHeight = (window.innerHeight - position.top) + "px";
 	}

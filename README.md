@@ -4,11 +4,13 @@
 
 </div>
 
-# WeiLin-ComfyUI-Prompt-all-in-one
+# 版本更新介绍
 
-WeiLin-ComfyUI-Prompt-all-in-one ComfyUI 版的 prompt-all-in-one，在基于 sd-webui-prompt-all-in-one-app 项目上修改而来的 ComfyUI 版本，只需要在 ComfyUI 中添加本项目的 ComfyUI 节点即可使用可视化的 tag 编辑器
+> 2.4.0 版本介绍</br>1. 修复了提示词补全的 BUG</br>2. 仅中文新增了 NSFW 提示词库</br>3. 新增了 Lora 提示词自动加载，只需要在 PromptUI 添加 Lora 即可与 WebUI 提示词写法一样</br>4. 在 ComfyUI 设置里面可以修改 PromptUI 的关闭按钮切换到右边
 
-如果你喜欢本项目赏一个 star 吧！
+> 2.3.0 版本介绍</br>1. 新增了提示词补全功能
+
+> 2.2.0 版本介绍 </br>1. 修复了已知 BUG</br>2. 更新了新的功能：全局提示词 UI、放大窗口功能
 
 # 概要说明
 
@@ -31,6 +33,12 @@ WeiLin-ComfyUI-Prompt-all-in-one ComfyUI 版的 prompt-all-in-one，在基于 sd
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/2.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/3.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/4.png)
+
+# WeiLin-ComfyUI-Prompt-all-in-one 借鉴项目
+
+WeiLin-ComfyUI-Prompt-all-in-one ComfyUI 版的 prompt-all-in-one，在基于 sd-webui-prompt-all-in-one-app 项目上修改而来的 ComfyUI 版本，只需要在 ComfyUI 中添加本项目的 ComfyUI 节点即可使用可视化的 tag 编辑器 ，提示词补全使用了 https://github.com/pythongosssss/ComfyUI-Custom-Scripts 项目进行修改只用了补全功能并做了修改
+
+如果你喜欢本项目赏一个 star 吧！
 
 # 本项目简要说明
 
