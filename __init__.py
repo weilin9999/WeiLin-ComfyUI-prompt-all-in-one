@@ -89,11 +89,11 @@ class WeiLinComfyUIPromptAllInOneGreatLoras:
             strength_clip = 1
             if len(str_n_arr) > 0:
                 if len(str_n_arr) == 1:
-                    strength_model = int(str_n_arr[0])
-                    strength_clip = int(str_n_arr[0])
+                    strength_model = float(str_n_arr[0])
+                    strength_clip = float(str_n_arr[0])
                 if len(str_n_arr) > 1:
-                    strength_model = int(str_n_arr[0])
-                    strength_clip = int(str_n_arr[1])
+                    strength_model = float(str_n_arr[0])
+                    strength_clip = float(str_n_arr[1])
             
             lora_path = folder_paths.get_full_path("loras", loar_sim_path)
             lora = None
@@ -197,11 +197,11 @@ class WeiLinComfyUIPromptAllInOneNegLoras:
             strength_clip = 1
             if len(str_n_arr) > 0:
                 if len(str_n_arr) == 1:
-                    strength_model = int(str_n_arr[0])
-                    strength_clip = int(str_n_arr[0])
+                    strength_model = float(str_n_arr[0])
+                    strength_clip = float(str_n_arr[0])
                 if len(str_n_arr) > 1:
-                    strength_model = int(str_n_arr[0])
-                    strength_clip = int(str_n_arr[1])
+                    strength_model = float(str_n_arr[0])
+                    strength_clip = float(str_n_arr[1])
             
             lora_path = folder_paths.get_full_path("loras", loar_sim_path)
             lora = None
