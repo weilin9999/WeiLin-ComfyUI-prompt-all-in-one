@@ -10,8 +10,8 @@ import comfy.utils
 import logging
 import re
 
-#正向提示词
-class WeiLinComfyUIPromptAllInOneGreat:
+#提示词编辑器 转 STRING
+class WeiLinPromptToString:
 
     def __init__(self):
         pass
@@ -20,18 +20,22 @@ class WeiLinComfyUIPromptAllInOneGreat:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "text": ("STRING", {
-                    "multiline": True, #True if you want the field to look like the one on the ClipTextEncode node
+                "positive": ("STRING", {
+                    "multiline": True,
                     "default": "",
                     "placeholder": "输入正向提示词",
+                }),
+                "negative": ("STRING", {
+                    "multiline": True,
+                    "default": "",
+                    "placeholder": "输入反向提示词",
                 }),
             },
         }
 
-    RETURN_TYPES = ("STRING",)
-    # RETURN_TYPES = ("MODEL", "CLIP")
-    # RETURN_TYPES = ("MODEL", "CONDITIONING")
-    #RETURN_NAMES = ("image_output_name",)
+    RETURN_TYPES = ("STRING","STRING")
+
+    RETURN_NAMES = ("正向 STRING","反向 STRING")
 
     FUNCTION = "encode"
 
@@ -39,16 +43,18 @@ class WeiLinComfyUIPromptAllInOneGreat:
 
     CATEGORY = "WeiLin Nodes (WeiLin节点)"
 
-    def encode(self, text):
-        text= extract_tags(text)
-        return (text,)
+    def encode(self, positive,negative):
+        textA= extract_tags(positive)
+        textB= extract_tags(negative)
+        return (textA,textB)
 
 
-# 正向提示词的Lora加载器
-class WeiLinComfyUIPromptAllInOneGreatLoras:
+# 提示词适配Lora加载器
+class WeiLinComfyUIPromptToLoras:
 
     def __init__(self):
-        self.loaded_lora = None
+        self.loaded_loraA = None
+        self.loaded_loraB = None
     
     @classmethod
     def INPUT_TYPES(s):
@@ -56,18 +62,23 @@ class WeiLinComfyUIPromptAllInOneGreatLoras:
             "required": {
                 "model": ("MODEL",),
                 "clip": ("CLIP", ),
-                "text": ("STRING", {
-                    "multiline": True, #True if you want the field to look like the one on the ClipTextEncode node
+                "positive": ("STRING", {
+                    "multiline": True,
                     "default": "",
                     "placeholder": "输入正向提示词",
+                }),
+                "negative": ("STRING", {
+                    "multiline": True,
+                    "default": "",
+                    "placeholder": "输入反向提示词",
                 }),
             },
         }
 
     # RETURN_TYPES = ("STRING",)
     # RETURN_TYPES = ("MODEL", "CLIP")
-    RETURN_TYPES = ("MODEL", "CONDITIONING")
-    #RETURN_NAMES = ("image_output_name",)
+    RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING")
+    RETURN_NAMES = ("model","正向条件 CONDITIONING","负面条件 CONDITIONING")
 
     # FUNCTION = "encode"
     FUNCTION = "load_lora_great"
@@ -77,155 +88,55 @@ class WeiLinComfyUIPromptAllInOneGreatLoras:
     CATEGORY = "WeiLin Nodes (WeiLin节点)"
     
     # 加载Lora
-    def load_lora_great(self, model, clip, text):
-        arr,rel_str = replaceStrFunc(text)
-        model_lora_second = model
-        clip_lora_second = clip
+    def load_lora_great(self, model, clip, positive,negative):
+        model_lora_secondA = model
+        clip_lora_secondA = clip
+        clip_secondB = clip #反向的CLIP
 
-        for str_lora_item in arr:
-            loar_sim_path,str_n_arr = getStrLoraName(str_lora_item)
-            # print(loar_sim_path,str_n_arr)
-            strength_model = 1
-            strength_clip = 1
-            if len(str_n_arr) > 0:
-                if len(str_n_arr) == 1:
-                    strength_model = float(str_n_arr[0])
-                    strength_clip = float(str_n_arr[0])
-                if len(str_n_arr) > 1:
-                    strength_model = float(str_n_arr[0])
-                    strength_clip = float(str_n_arr[1])
-            
-            lora_path = folder_paths.get_full_path("loras", loar_sim_path)
-            lora = None
-            if self.loaded_lora is not None:
-                if self.loaded_lora[0] == lora_path:
-                    lora = self.loaded_lora[1]
-                else:
-                    temp = self.loaded_lora
-                    self.loaded_lora = None
-                    del temp
+        # 当模型不为空时
+        if model != None:
+            #处理正向
+            arr,rel_str = replaceStrFunc(positive)
+            for str_lora_item in arr:
+                loar_sim_path,str_n_arr = getStrLoraName(str_lora_item)
+                # print(loar_sim_path,str_n_arr)
+                print(str_n_arr)
+                strength_model = 1
+                strength_clip = 1
+                if len(str_n_arr) > 0:
+                    if len(str_n_arr) == 1:
+                        strength_model = float(str_n_arr[0])
+                        strength_clip = float(str_n_arr[0])
+                    if len(str_n_arr) > 1:
+                        strength_model = float(str_n_arr[0])
+                        strength_clip = float(str_n_arr[1])
+                
+                lora_path = folder_paths.get_full_path("loras", loar_sim_path)
+                lora = None
+                if self.loaded_loraA is not None:
+                    if self.loaded_loraA[0] == lora_path:
+                        lora = self.loaded_loraA[1]
+                    else:
+                        temp = self.loaded_loraA
+                        self.loaded_loraA = None
+                        del temp
 
-            if lora is None:
-                lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
-                self.loaded_lora = (lora_path, lora)
+                if lora is None:
+                    lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
+                    self.loaded_loraA = (lora_path, lora)
 
-            model_lora_second, clip_lora_second = load_lora_for_models(model_lora_second, clip_lora_second, lora, strength_model, strength_clip)
-        
-        # prompt处理
-        tokens = clip_lora_second.tokenize(rel_str)
-        output = clip_lora_second.encode_from_tokens(tokens, return_pooled=True, return_dict=True)
-        cond = output.pop("cond")
-        return (model_lora_second,[[cond, output]])
+                model_lora_secondA, clip_lora_secondA = load_lora_for_models(model_lora_secondA, clip_lora_secondA, lora, strength_model, strength_clip)
+
+        # prompt正向返回
+        tokensA = clip_lora_secondA.tokenize(rel_str)
+        outputA = clip_lora_secondA.encode_from_tokens(tokensA, return_pooled=True, return_dict=True)
+        condA = outputA.pop("cond")
+        # prompt反向返回 反向不支持Lora
+        tokensB = clip_secondB.tokenize(negative)
+        outputB = clip_secondB.encode_from_tokens(tokensB, return_pooled=True, return_dict=True)
+        condB = outputB.pop("cond")
+        return (model_lora_secondA,[[condA, outputA]],[[condB, outputB]])
         # return (model_lora_second, clip_lora_second)
-    
-
-#反向提示词
-class WeiLinComfyUIPromptAllInOneNeg:
-
-    def __init__(self):
-        pass
-    
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "text": ("STRING", {
-                    "multiline": True, #True if you want the field to look like the one on the ClipTextEncode node
-                    "default": "",
-                    "placeholder": "输入反向提示词",
-                }),
-            },
-        }
-
-    RETURN_TYPES = ("STRING",)
-    #RETURN_NAMES = ("image_output_name",)
-
-    FUNCTION = "encode"
-
-    #OUTPUT_NODE = False
-
-    CATEGORY = "WeiLin Nodes (WeiLin节点)"
-
-    def encode(self, text):
-        text= extract_tags(text)
-        return (text,)
-
-
-
-# 反向提示词的Lora加载器
-class WeiLinComfyUIPromptAllInOneNegLoras:
-
-    def __init__(self):
-        self.loaded_lora = None
-    
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "model": ("MODEL",),
-                "clip": ("CLIP", ),
-                "text": ("STRING", {
-                    "multiline": True, #True if you want the field to look like the one on the ClipTextEncode node
-                    "default": "",
-                    "placeholder": "输入反向提示词",
-                }),
-            },
-        }
-
-    # RETURN_TYPES = ("STRING",)
-    # RETURN_TYPES = ("MODEL", "CLIP")
-    RETURN_TYPES = ("MODEL", "CONDITIONING")
-    #RETURN_NAMES = ("image_output_name",)
-
-    # FUNCTION = "encode"
-    FUNCTION = "load_lora_great"
-
-    #OUTPUT_NODE = False
-
-    CATEGORY = "WeiLin Nodes (WeiLin节点)"
-    
-    # 加载Lora
-    def load_lora_great(self, model, clip, text):
-        arr,rel_str = replaceStrFunc(text)
-        model_lora_second = model
-        clip_lora_second = clip
-
-        for str_lora_item in arr:
-            loar_sim_path,str_n_arr = getStrLoraName(str_lora_item)
-            # print(loar_sim_path,str_n_arr)
-            strength_model = 1
-            strength_clip = 1
-            if len(str_n_arr) > 0:
-                if len(str_n_arr) == 1:
-                    strength_model = float(str_n_arr[0])
-                    strength_clip = float(str_n_arr[0])
-                if len(str_n_arr) > 1:
-                    strength_model = float(str_n_arr[0])
-                    strength_clip = float(str_n_arr[1])
-            
-            lora_path = folder_paths.get_full_path("loras", loar_sim_path)
-            lora = None
-            if self.loaded_lora is not None:
-                if self.loaded_lora[0] == lora_path:
-                    lora = self.loaded_lora[1]
-                else:
-                    temp = self.loaded_lora
-                    self.loaded_lora = None
-                    del temp
-
-            if lora is None:
-                lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
-                self.loaded_lora = (lora_path, lora)
-
-            model_lora_second, clip_lora_second = load_lora_for_models(model_lora_second, clip_lora_second, lora, strength_model, strength_clip)
-        
-        # prompt处理
-        tokens = clip_lora_second.tokenize(rel_str)
-        output = clip_lora_second.encode_from_tokens(tokens, return_pooled=True, return_dict=True)
-        cond = output.pop("cond")
-        return (model_lora_second,[[cond, output]])
-        # return (model_lora_second, clip_lora_second)
-    
 
 
 def extract_tags(text):
@@ -312,7 +223,7 @@ def getStrLoraName(str):
             numbers = []
             for part in parts[1:]:
                 # 尝试从每个部分中提取数字
-                num_match = re.search(r'(\d+(\.\d+)?)', part)
+                num_match = re.search(r'(-?\d+(\.\d+)?)', part)
                 if num_match:
                     numbers.append(num_match.group(0))  # 将找到的数字添加到列表中
             # 输出结果
@@ -333,6 +244,7 @@ req_path = os.path.join(base_path,"requirements.txt")
 def dist2package(dist: str):
     return ({
         "gradio": "gradio",
+        "ruamel.yaml": "ruamel.yaml",
     }).get(dist, dist)
 
 
@@ -364,26 +276,26 @@ except:
 if loadErr == 0:
     print('WeiLinComfyUIPromptAllInOne 请求安装依赖成功 =======')
 
-#启动原APP
+# 启动原APP
 from .sd_webui_prompt_all_in_one_app.app import app_start
 app_start()
+
+# 启动LoraInfo路由
+from .script.lorainfo import loraInfoApp
+loraInfoApp()
 
 
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
 NODE_CLASS_MAPPINGS = {
-    "WeiLinComfyUIPromptAllInOneGreat": WeiLinComfyUIPromptAllInOneGreat,
-    "WeiLinComfyUIPromptAllInOneGreatLoras": WeiLinComfyUIPromptAllInOneGreatLoras,
-    "WeiLinComfyUIPromptAllInOneNeg": WeiLinComfyUIPromptAllInOneNeg,
-    "WeiLinComfyUIPromptAllInOneNegLoras": WeiLinComfyUIPromptAllInOneNegLoras,
+    "WeiLinPromptToString": WeiLinPromptToString,
+    "WeiLinComfyUIPromptToLoras": WeiLinComfyUIPromptToLoras,
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "WeiLinComfyUIPromptAllInOneGreat": "WeiLin 正向提示词 Positive",
-    "WeiLinComfyUIPromptAllInOneGreatLoras": "WeiLin 正向提示词Lora自动加载 Positive AutoLoras",
-    "WeiLinComfyUIPromptAllInOneNeg": "WeiLin 反向提示词 Negative",
-    "WeiLinComfyUIPromptAllInOneNegLoras": "WeiLin 反向提示词Lora自动加载 Negative AutoLoras",
+    "WeiLinPromptToString": "WeiLin提示词转String - Prompt To String",
+    "WeiLinComfyUIPromptToLoras": "WeiLin提示词Lora自动加载 - Prompt To AutoLoras",
 }
 
 WEB_DIRECTORY = "./js"

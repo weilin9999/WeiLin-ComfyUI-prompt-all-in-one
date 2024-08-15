@@ -590,12 +590,12 @@ app.registerExtension({
 
 		if(!onlyOne){
 			onlyOne = true
-			document.addEventListener('weilinInitCompleteGreatPrompt', e => {
-				const iframeBox = document.getElementById("weilin_prompt_great_box")
-				const Inselement1 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_great_ins_autocom")
-				const Inselement2 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_neg_ins_autocom")
-				const element1 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_text_input")
-				const element2 = window.frames['weilin_prompt_great_box'].document.getElementById("weilin_prompt_text_neg_input")
+			document.addEventListener('weilinInitCompletePrompt', e => {
+				const iframeBox = document.getElementById("weilin_prompt_global_box")
+				const Inselement1 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_great_ins_autocom")
+				const Inselement2 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_neg_ins_autocom")
+				const element1 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_text_input")
+				const element2 = window.frames['weilin_prompt_global_box'].document.getElementById("weilin_prompt_text_neg_input")
 				new TextAreaAutoComplete(element1,iframeBox,Inselement1)
 				new TextAreaAutoComplete(element2,iframeBox,Inselement2)
 			}, false);

@@ -7,7 +7,9 @@
     <title>WeiLin Prompt All In One</title>
     <link rel="stylesheet" href="./css/main.min.css">
     <link rel="stylesheet" href="./css/autocomplete.css">
+    <link rel="stylesheet" href="./styles/dialog_model_info.css">
     <link rel="stylesheet" href="./css/modelInfoDialog.css">
+    <link rel="stylesheet" href="./styles/color_style.css">
     <style>
         .topBar{
             display: flex;
@@ -45,11 +47,23 @@
             height: 20px;
             fill: var(--pp-ph-phe-ec-extendBtnGroup-color); 
         }
+        .windowIcon{
+            width: 20px;
+            height: 20px;
+            fill: var(--pp-ph-phe-ec-extendBtnGroup-color); 
+        }
         .closeBtn{
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+        }
+        .windowBtn{
+            margin-right: 20px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            user-select: none;
         }
         .refreshBtn{
             margin-left: 50px;
@@ -146,6 +160,17 @@
                 </div>
             </div>
             <div class="rightBox">
+                <div class="windowBtn">
+                    <input
+                        type="checkbox"
+                        id="weilin_prompt_ui_is_window_fomt"
+                    />
+                    <div style="padding-left: 3px;" class="windowIcon">
+                        <svg t="1723720042871" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7731" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M426.666667 213.333333a42.666667 42.666667 0 1 0 42.666666 42.666667 42.666667 42.666667 0 0 0-42.666666-42.666667zM256 213.333333a42.666667 42.666667 0 1 0 42.666667 42.666667 42.666667 42.666667 0 0 0-42.666667-42.666667z m341.333333 0a42.666667 42.666667 0 1 0 42.666667 42.666667 42.666667 42.666667 0 0 0-42.666667-42.666667z m256-170.666666H170.666667a128 128 0 0 0-128 128v682.666666a128 128 0 0 0 128 128h682.666666a128 128 0 0 0 128-128V170.666667a128 128 0 0 0-128-128z m42.666667 810.666666a42.666667 42.666667 0 0 1-42.666667 42.666667H170.666667a42.666667 42.666667 0 0 1-42.666667-42.666667v-384h768z m0-469.333333H128V170.666667a42.666667 42.666667 0 0 1 42.666667-42.666667h682.666666a42.666667 42.666667 0 0 1 42.666667 42.666667z" p-id="7732"></path>
+                        </svg>
+                    </div>
+                    <div style="padding-left: 2px;">启用窗口模式</div>
+                </div>
                 <div class="fullBtn" onclick="nomBox()" id="weilin_fullBtn">
                     <div class="fullIcon">
                         <svg t="1723036752389" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1022.73 870.84">
@@ -177,7 +202,7 @@
         <div style="margin-top: 10px;padding-left: 10px;" id="notePromptBox">在此输入提示词即可，当打开本UI的时候Comyfui正向提示词输入框默认只读无法编辑文本！</div>
         <div style="margin-top: 10px;padding-left: 10px;" id="yourIsEditing"></div>
     </div>
-    <div style="overflow-y: auto;overflow-x: hidden;height: 100vh;" id="tabs">
+    <div class="weilin_prompt_ui_main_box" id="tabs">
         <div id="tab_txt2img" class="tabitem gradio-tabitem svelte-19hvt5v">
             <div class="svelte-vt1mxs gap">
                 <div id="txt2img_toprow" class="gradio-row svelte-15lo0d8 compact">
@@ -332,7 +357,7 @@
     if (window.frameElement && window.frameElement.tagName === 'IFRAME') {
 
     } else {
-        window.close()
+        // window.close()
     }
 
     new ClipboardJS('.btn');
@@ -341,7 +366,6 @@
     const params = new URL(window.location.href)
     const searchParams = params.searchParams
     const window_type =  searchParams.get('type')
-    const ref_id =  searchParams.get('refid')
     const theme =  searchParams.get('__theme')
     thisRandomId = localStorage.getItem("weilin_prompt_randomid");
     const onFirst = localStorage.getItem("weilin_prompt_onfirst");
@@ -353,24 +377,9 @@
     const weilinCopyGreatPrompt = document.getElementById("weilinCopyGreatPrompt")
     const weilinCopyNegPrompt = document.getElementById("weilinCopyNegPrompt")
     let getSettingChangUI = localStorage.getItem("weilin_prompt_ui_change_close") // UI设置
+    let getIsWindowMode = localStorage.getItem("weilin_prompt_ui_is_window")
     new ClipboardJS(weilinCopyGreatPrompt);
     new ClipboardJS(weilinCopyNegPrompt);
-
-    if(getSettingChangUI == 'false'){
-        const El = document.getElementById("weilin_prompt_ui_right_close_btn")
-        const El3 = document.getElementById("weilin_prompt_ui_left_close_btn")
-        const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
-        El.style.display="none";
-        El3.style.display="flex";
-        El2.style.marginLeft ="50px"
-    }else{
-        const El = document.getElementById("weilin_prompt_ui_left_close_btn")
-        const El3 = document.getElementById("weilin_prompt_ui_right_close_btn")
-        const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
-        El.style.display="none";
-        El3.style.display="flex";
-        El2.style.marginLeft ="0px"
-    }
 
     // console.log(getBoxStatus)
     if(getBoxStatus == null){
@@ -388,69 +397,69 @@
         }
     }
 
+    const weilin_prompt_ui_is_window_fomt = document.getElementById("weilin_prompt_ui_is_window_fomt");
+    if(getIsWindowMode=='no'){
+        weilin_prompt_ui_is_window_fomt.checked=false
+    }else{
+        weilin_prompt_ui_is_window_fomt.checked=true
+        weilin_fullBtn.style.display = "none"
+        weilin_nomBtn.style.display = "none"
+    }
+    // 监听checkbox
+    weilin_prompt_ui_is_window_fomt.addEventListener('change', function(e) {
+        if(e.target.checked){
+            localStorage.setItem("weilin_prompt_ui_is_window",'yes')
+            getIsWindowMode = "yes"
+            window.top.postMessage({handel: 'changeWeilinPromptWindowMode', randomid: thisRandomId}, "/");
+            weilin_fullBtn.style.display = "none"
+            weilin_nomBtn.style.display = "none"
+        }else{
+            localStorage.setItem("weilin_prompt_ui_is_window",'no')
+            getIsWindowMode = "no"
+            if(getBoxStatus == "full"){
+                weilin_fullBtn.style.display = "flex"
+                weilin_nomBtn.style.display = "none"
+            }else{
+                weilin_fullBtn.style.display = "none"
+                weilin_nomBtn.style.display = "flex"
+            }
+            window.top.postMessage({handel: 'changeWeilinPromptWindowMode', randomid: thisRandomId}, "/");
+        }
+    });
+
+
+    if(getSettingChangUI == 'false'){
+        const El = document.getElementById("weilin_prompt_ui_right_close_btn")
+        const El3 = document.getElementById("weilin_prompt_ui_left_close_btn")
+        const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
+        El.style.display="none";
+        El3.style.display="flex";
+        El2.style.marginLeft ="50px"
+    }else{
+        const El = document.getElementById("weilin_prompt_ui_left_close_btn")
+        const El3 = document.getElementById("weilin_prompt_ui_right_close_btn")
+        const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
+        El.style.display="none";
+        El3.style.display="flex";
+        El2.style.marginLeft ="0px"
+    }
+
     // console.log(window_type)
-    if(window_type == 'greate_prompt'){
-        const ng_box = document.getElementById('component-5178')
-        ng_box.style = "display: none !important";
-        const editingBox = document.getElementById('yourIsEditing')
-        const notePromptBox = document.getElementById('notePromptBox')
-        editingBox.innerText="你正在编辑 -> 正向提示词"
-        notePromptBox.style.display = "flex"
-        
-        const great_refid = localStorage.getItem("weilin_prompt_great_refid")
-        if(ref_id != great_refid){
-            window.top.postMessage({handel: 'getWeilinGreatPromptBox', randomid: thisRandomId}, "/");
-        }
-        const evt = new CustomEvent("weilinInitCompleteGreatPrompt", {"detail":{"open":true}});
-        window.top.document.dispatchEvent(evt);
-    }else if(window_type == 'neg_prompt'){
-        const ng_box = document.getElementById('component-5173')
-        ng_box.style = "display: none !important";
-        const editingBox = document.getElementById('yourIsEditing')
-        const notePromptBox = document.getElementById('notePromptBox')
-        editingBox.innerText="你正在编辑 -> 反向提示词"
-        notePromptBox.style.display = "flex"
+    if(window_type == 'prompt'){
 
-        const neg_refid = localStorage.getItem("weilin_prompt_neg_refid")
-        if(ref_id != neg_refid){
-            window.top.postMessage({handel: 'getWeilinNegPromptBox', randomid: thisRandomId}, "/");
-        }
-        if(onFirst == 1){
-            localStorage.setItem("weilin_prompt_onfirst",0);
-            window.top.postMessage({handel: 'getWeilinNegPromptBox', randomid: thisRandomId}, "/");
-        }
-        const evt = new CustomEvent("weilinInitCompleteNegPrompt", {"detail":{"open":true}});
-        window.top.document.dispatchEvent(evt);
-    }else if(window_type == 'global_prompt'){
-        const editingBox = document.getElementById('yourIsEditing')
-        const notePromptBox = document.getElementById('notePromptBox')
-        editingBox.innerText="你正在使用临时提示词模式，该模式下仅用于对提示词的临时使用无法同步到节点中"
-        notePromptBox.style.display = "none"
+        thisRandomId = localStorage.getItem("weilin_prompt_randomid")
 
-        const global_refid = localStorage.getItem("weilin_prompt_global_refid")
-        if(ref_id != global_refid){
-            window.top.postMessage({handel: 'getWeilinGlobalPromptBox', randomid: thisRandomId}, "/");
-        }
+        window.top.postMessage({handel: 'getWeilinPromptBox', randomid: thisRandomId}, "/");
 
-        if(onFirst == 1){
-            localStorage.setItem("weilin_prompt_onfirst",0);
-            window.top.postMessage({handel: 'getWeilinGlobalPromptBox', randomid: thisRandomId}, "/");
-        }
-
-        weilin_copyPrompt.style.display = "flex"
-        const evt = new CustomEvent("weilinInitCompleteGlobalPrompt", {"detail":{"open":true}});
+        const evt = new CustomEvent("weilinInitCompletePrompt", {"detail":{"open":true}});
         window.top.document.dispatchEvent(evt);
     }
     
     if(theme != getTheme && (theme=='light' || theme=='dark' || theme == null)){
         localStorage.setItem("weilin_prompt_theme",theme);
         // 重新获取prompt
-        if(window_type == 'greate_prompt'){
-            window.top.postMessage({handel: 'getWeilinGreatPromptBox', randomid: thisRandomId}, "/");
-        }else if(window_type == 'neg_prompt'){
-            window.top.postMessage({handel: 'getWeilinNegPromptBox', randomid: thisRandomId}, "/");
-        }else if(window_type == 'global_prompt'){
-            window.top.postMessage({handel: 'getWeilinGlobalPromptBox', randomid: thisRandomId}, "/");
+        if(window_type == 'prompt'){
+            window.top.postMessage({handel: 'getWeilinPromptBox', randomid: thisRandomId}, "/");
         }
     }
 
@@ -481,98 +490,90 @@
 
     window.addEventListener('message', e => {
         // console.log(e.data)
-      if(e.data.handel == 'openWeiLinGreatPromptSD'){
-        if(window_type =='greate_prompt'){
+        if(e.data.handel == 'openWeiLinPrompt'){
+            if(window_type =='prompt'){
+                thisRandomId = e.data.randomid
+                log.value = e.data.g_value
+                log2.value = e.data.n_value
+                if(e.data.type == 'prompt'){
+                    const editingBox = document.getElementById('yourIsEditing')
+                    const notePromptBox = document.getElementById('notePromptBox')
+                    editingBox.innerText="你正在编辑提示词 反向提示词不支持Lora"
+                    notePromptBox.style.display = "flex"
+                }else if(e.data.type == 'global'){
+                    const editingBox = document.getElementById('yourIsEditing')
+                    const notePromptBox = document.getElementById('notePromptBox')
+                    editingBox.innerText="你正在使用临时提示词模式，该模式下仅用于对提示词的临时使用无法同步到节点中"
+                    notePromptBox.style.display = "none"
+                }
+            }
+        }else if(e.data.handel == 'responeseWeiLinPrompt'){
             thisRandomId = e.data.randomid
-            log.value = e.data.value
+            log.value = e.data.g_value
+            log2.value = e.data.n_value
+            if(e.data.type == 'prompt'){
+                const editingBox = document.getElementById('yourIsEditing')
+                const notePromptBox = document.getElementById('notePromptBox')
+                editingBox.innerText="你正在编辑提示词 反向提示词不支持Lora"
+                notePromptBox.style.display = "flex"
+            }else if(e.data.type == 'global'){
+                const editingBox = document.getElementById('yourIsEditing')
+                const notePromptBox = document.getElementById('notePromptBox')
+                editingBox.innerText="你正在使用临时提示词模式，该模式下仅用于对提示词的临时使用无法同步到节点中"
+                notePromptBox.style.display = "none"
+            }
+        }else if(e.data.handel == 'fullBoxWeilinPromptBoxResponse'){
+            getBoxStatus = localStorage.getItem("weilin_prompt_box_status");
+            boxStatus = getBoxStatus
+            if(getBoxStatus == "full"){
+                weilin_fullBtn.style.display = "flex"
+                weilin_nomBtn.style.display = "none"
+            }else{
+                weilin_fullBtn.style.display = "none"
+                weilin_nomBtn.style.display = "flex"
+            }
+        }else if(e.data.handel == 'nomBoxWeilinPromptBoxResponse'){
+            getBoxStatus = localStorage.getItem("weilin_prompt_box_status");
+            boxStatus = getBoxStatus
+            if(getBoxStatus == "full"){
+                weilin_fullBtn.style.display = "flex"
+                weilin_nomBtn.style.display = "none"
+            }else{
+                weilin_fullBtn.style.display = "none"
+                weilin_nomBtn.style.display = "flex"
+            }
+        }else if(e.data.handel == 'changeSettingWeilinPromptUIChangeClose'){
+            getSettingChangUI = localStorage.getItem("weilin_prompt_ui_change_close")
+            // console.log(getSettingChangUI)
+            if(getSettingChangUI == 'false'){
+                const El = document.getElementById("weilin_prompt_ui_right_close_btn")
+                const El3 = document.getElementById("weilin_prompt_ui_left_close_btn")
+                const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
+                El.style.display="none";
+                El3.style.display="flex";
+                El2.style.marginLeft ="50px"
+            }else{
+                const El = document.getElementById("weilin_prompt_ui_left_close_btn")
+                const El3 = document.getElementById("weilin_prompt_ui_right_close_btn")
+                const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
+                El.style.display="none";
+                El3.style.display="flex";
+                El2.style.marginLeft ="0px"
+            }
         }
-      }else if(e.data.handel == 'openWeiLinNegPromptSD'){
-        if(window_type =='neg_prompt'){
-            thisRandomId = e.data.randomid
-            log2.value = e.data.value
-        }
-      }else if(e.data.handel  == 'openWeiLinGlobalPromptSD'){
-        if(window_type =='global_prompt'){
-            thisRandomId = e.data.randomid
-            log.value = e.data.value_great
-            log2.value = e.data.value_neg
-        }
-      }else if(e.data.handel == 'responeseWeiLinGreatPromptGet'){
-        if(window_type =='greate_prompt'){
-            thisRandomId = e.data.randomid
-            log.value = e.data.value
-        }
-      }else if(e.data.handel == 'responeseWeiLinNegPromptGet'){
-        if(window_type =='neg_prompt'){
-            thisRandomId = e.data.randomid
-            log2.value = e.data.value
-        }
-      }else if(e.data.handel == 'responeseWeiLinGlobalPromptGet'){
-        if(window_type =='global_prompt'){
-            thisRandomId = e.data.randomid
-            log.value = e.data.value_great
-            log2.value = e.data.value_neg
-        }
-      }else if(e.data.handel == 'fullBoxWeilinPromptBoxResponse'){
-        getBoxStatus = localStorage.getItem("weilin_prompt_box_status");
-        boxStatus = getBoxStatus
-        if(getBoxStatus == "full"){
-            weilin_fullBtn.style.display = "flex"
-            weilin_nomBtn.style.display = "none"
-        }else{
-            weilin_fullBtn.style.display = "none"
-            weilin_nomBtn.style.display = "flex"
-        }
-      }else if(e.data.handel == 'nomBoxWeilinPromptBoxResponse'){
-        getBoxStatus = localStorage.getItem("weilin_prompt_box_status");
-        boxStatus = getBoxStatus
-        if(getBoxStatus == "full"){
-            weilin_fullBtn.style.display = "flex"
-            weilin_nomBtn.style.display = "none"
-        }else{
-            weilin_fullBtn.style.display = "none"
-            weilin_nomBtn.style.display = "flex"
-        }
-      }else if(e.data.handel == 'changeSettingWeilinPromptUIChangeClose'){
-        getSettingChangUI = localStorage.getItem("weilin_prompt_ui_change_close")
-        // console.log(getSettingChangUI)
-        if(getSettingChangUI == 'false'){
-            const El = document.getElementById("weilin_prompt_ui_right_close_btn")
-            const El3 = document.getElementById("weilin_prompt_ui_left_close_btn")
-            const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
-            El.style.display="none";
-            El3.style.display="flex";
-            El2.style.marginLeft ="50px"
-        }else{
-            const El = document.getElementById("weilin_prompt_ui_left_close_btn")
-            const El3 = document.getElementById("weilin_prompt_ui_right_close_btn")
-            const El2 = document.getElementById("weilin_prompt_ui_left_refresh_btn")
-            El.style.display="none";
-            El3.style.display="flex";
-            El2.style.marginLeft ="0px"
-        }
-      }
     }, false);
 
     function updateValue(e) {
         // console.log(log.value)
-        if(window_type =='greate_prompt'){
-            window.top.postMessage({handel: 'changeWeiLinGreatePrompt',value: log.value,randomid: thisRandomId}, "/");
-        }else if(window_type =='neg_prompt'){
-            window.top.postMessage({handel: 'changeWeiLinNegPrompt',value: log2.value,randomid: thisRandomId}, "/");
-        }else if(window_type =='global_prompt'){
-            window.top.postMessage({handel: 'changeWeiLinGlobalPrompt',value_great: log.value,value_neg: log2.value,randomid: thisRandomId}, "/");
+        if(window_type =='prompt'){
+            window.top.postMessage({handel: 'changeWeiLinPrompt',g_value: log.value,n_value: log2.value,randomid: thisRandomId}, "/");
         }
     }
 
 
     function closeDialog(){
-        if(window_type =='greate_prompt'){
-            window.top.postMessage({handel: 'closeWeilinGreatPromptBox', randomid: thisRandomId}, "/");
-        }else if(window_type =='neg_prompt'){
-            window.top.postMessage({handel: 'closeWeilinNegPromptBox', randomid: thisRandomId}, "/");
-        }else if(window_type =='global_prompt'){
-            window.top.postMessage({handel: 'closeWeilinGlobalPromptBox', randomid: thisRandomId}, "/");
+        if(window_type =='prompt'){
+            window.top.postMessage({handel: 'closeWeilinPromptBox', randomid: thisRandomId}, "/");
         }
     }
 

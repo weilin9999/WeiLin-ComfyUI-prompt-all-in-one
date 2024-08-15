@@ -6,21 +6,30 @@
 
 # 版本更新介绍
 
+> 3.0.0 版本介绍
+>
+> 1. 修复了已知 BUG
+> 2. 新增-Tag 添加、删除、修改 功能
+> 3. 新增-开启窗口模式可以随意拖动窗口右小角可以调节窗口大小方便在 ComfyUI 中使用
+> 4. 新增-Lora 查看器，在 Lora 卡片中右上角有个提示按钮点击即可查看 Lora 信息且可以同步 C 站和设置 Lora 封面的功能
+> 5. 新增-Lora 的提示词有专属适配 ComfyUI 的模型强度和 CLIP 强度的调节器
+
 > 2.4.0 版本介绍</br>1. 修复了提示词补全的 BUG</br>2. 仅中文新增了 NSFW 提示词库</br>3. 新增了 Lora 提示词自动加载，只需要在 PromptUI 添加 Lora 即可与 WebUI 提示词写法一样</br>4. 在 ComfyUI 设置里面可以修改 PromptUI 的关闭按钮切换到右边
 
 > 2.3.0 版本介绍</br>1. 新增了提示词补全功能
 
 > 2.2.0 版本介绍 </br>1. 修复了已知 BUG</br>2. 更新了新的功能：全局提示词 UI、放大窗口功能
 
-# Lora提示词写法提示
-<lora:xxxx:0.3:0.4>这种写法解释 0.3是模型强度 0.4是CLIP强度
-如果你是<lora:xxxx:0.4>那么这种写法解释 模型强度和CLIP强度都是0.4
+# Lora 提示词写法提示
+
+<lora:xxxx:0.3:0.4>这种写法解释 0.3 是模型强度 0.4 是 CLIP 强度
+如果你是<lora:xxxx:0.4>那么这种写法解释 模型强度和 CLIP 强度都是 0.4
 
 # 概要说明
 
-本项目是从 sd-webui-prompt-all-in-one-app: https://github.com/Physton/sd-webui-prompt-all-in-one-app 项目上修改出来的 ComfyUI 版本，但对原作者的项目有所修改，请大家到本项目的 release 下载！！！
+本项目可以让你在 ComfyUI 中像 WebUI 一样写提示词，从 Prompt-all-in-one 项目修改而来但已做了大部分的修改适配 ComfyUI，新增了许多不一样的功能，以及提示词补全的插件，提示词补全插件是从 ComfyUI-Custom-Scripts 项目修改而来，感谢你对本插件的支持。
 
-本项目已经把原作者的代码重新写成了 ComfyUI 的版本，不需要启动其它的脚本，直接运行 ComfyUI 即可本项目会自动安装依赖包
+如果你对本项目有兴趣赏一个 Star 吧！
 
 # 安装教程，可以直接 git 本项目即可
 
@@ -40,7 +49,7 @@
 
 # WeiLin-ComfyUI-Prompt-all-in-one 借鉴项目
 
-WeiLin-ComfyUI-Prompt-all-in-one ComfyUI 版的 prompt-all-in-one，在基于 sd-webui-prompt-all-in-one-app 项目上修改而来的 ComfyUI 版本，只需要在 ComfyUI 中添加本项目的 ComfyUI 节点即可使用可视化的 tag 编辑器 ，提示词补全使用了 https://github.com/pythongosssss/ComfyUI-Custom-Scripts 项目进行修改只用了补全功能并做了修改
+WeiLin-ComfyUI-Prompt-all-in-one ComfyUI 版的 prompt-all-in-one，在基于 sd-webui-prompt-all-in-one-app https://github.com/Physton/sd-webui-prompt-all-in-one-app 项目上修改而来的 ComfyUI 版本，只需要在 ComfyUI 中添加本项目的 ComfyUI 节点即可使用可视化的 tag 编辑器 ，提示词补全使用了 https://github.com/pythongosssss/ComfyUI-Custom-Scripts 项目进行修改只用了补全功能并做了修改
 
 如果你喜欢本项目赏一个 star 吧！
 
