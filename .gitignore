@@ -1,0 +1,5 @@
+/.idea
+**/__pycache__
+__pycache__
+**/*.exe
+/loras_userdata/info
