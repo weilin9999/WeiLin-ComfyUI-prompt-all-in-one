@@ -322,7 +322,7 @@ async def get_model_info(file: str,
     save_model_info(file, info_data, model_type=model_type)
 
     # If we're saving, then the UI is likely waiting to see if the refreshed data is coming in.
-    await PromptServer.instance.send("weilin-refreshed-lora-info", {"data": info_data})
+    # await PromptServer.instance.send("weilin-refreshed-lora-info", {"data": info_data})
 
   return info_data
 
