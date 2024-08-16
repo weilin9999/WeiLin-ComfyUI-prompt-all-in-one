@@ -8,25 +8,24 @@ appendPath = os.path.join(os.path.dirname(__file__), "./")
 sys.path.append(appendPath)
 from .llm import Translator,llmTranslate,llm
 
-transObj = {}
-
-# 打开并读取 JSON 文件
-settingJsonPath = os.path.join(os.path.dirname(__file__), "../llm_setting.json")
-with open(settingJsonPath, 'r', encoding='utf-8') as file:
-    transObj = json.load(file)
-
-def readJson():
-    # 打开并读取 JSON 文件
-    settingJsonPath = os.path.join(os.path.dirname(__file__), "../llm_setting.json")
-    with open(settingJsonPath, 'r', encoding='utf-8') as file:
-        data = json.load(file)
-    return data
-
-def translate(text):
-    trans_server=llmTranslate.LLMTranslatorTest()
-    return Translator.translate_text(trans_server,text,transObj)
-
 def runLLMServerAPP():
+    global transObj
+    transObj = {}
+
+    settingJsonPath = os.path.join(os.path.dirname(__file__), "../llm_setting.json")
+
+    def readJson():
+        # 打开并读取 JSON 文件
+        settingJsonPath = os.path.join(os.path.dirname(__file__), "../llm_setting.json")
+        with open(settingJsonPath, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        return data
+
+    def translate(text):
+        transObj = readJson()
+        trans_server=llmTranslate.LLMTranslatorTest()
+        return Translator.translate_text(trans_server,text,transObj)
+
     @server.PromptServer.instance.routes.get("/weilin/api/llm_server/testTransServer")
     async def _testTransServer(request):
       
@@ -42,11 +41,13 @@ def runLLMServerAPP():
     
     @server.PromptServer.instance.routes.get("/weilin/api/llm_server/getSetting")
     async def _getSetting(request):
+        transObj = readJson()
         return web.json_response({"data":transObj}, content_type='application/json')
     
     @server.PromptServer.instance.routes.post("/weilin/api/llm_server/setTransServer")
     async def _setTransServer(request):
         post = await request.json()
+        transObj = readJson()
         transObj["preset"] = post["preset"]
         transObj["llmName"] = post["llmName"]
         transObj["n_gpu_layers"] = int(post["n_gpu_layers"])
@@ -59,6 +60,7 @@ def runLLMServerAPP():
     @server.PromptServer.instance.routes.post("/weilin/api/llm_server/imaginePrompt")
     async def _imaginePrompt(request):
             post = await request.json()
+            transObj = readJson()
             try:
                 res=llm.chat_imagine(post['content'],transObj)
             except:
