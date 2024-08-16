@@ -3,11 +3,11 @@ from pathlib import Path
 
 base_dir = str(Path().absolute())
 self_base_dir = os.path.abspath(os.path.join(os.path.join(os.path.dirname(__file__)), '../', '../'))
-self_tags_dir = os.path.join(self_base_dir, 'tags')
+self_tags_dir = os.path.join(self_base_dir, '../../local_complete_tags')
 dirs = [
     self_tags_dir,
-    # os.path.join(base_dir, 'extensions', 'sd-webui-prompt-all-in-one', 'tags'),
-    os.path.join(base_dir, 'extensions', 'a1111-sd-webui-tagcomplete', 'tags'),
+    os.path.join(base_dir, 'custom_nodes', 'WeiLin-ComfyUI-prompt-all-in-one', 'local_complete_tags'),
+    # os.path.join(base_dir, 'extensions', 'a1111-sd-webui-tagcomplete', 'tags'),
 ]
 
 
@@ -27,7 +27,7 @@ def get_csvs():
                 if dir == self_tags_dir:
                     # 去除 self_tags_dir 后的路径
                     key = path.replace(self_tags_dir, '')
-                    key = '\\extensions\\sd-webui-prompt-all-in-one\\tags\\' + name
+                    key = '\\custom_nodes\\WeiLin-ComfyUI-prompt-all-in-one\\local_complete_tags\\' + name
                 else:
                     # 去除 base_dir 后的路径
                     key = path.replace(base_dir, '')
@@ -46,7 +46,7 @@ def get_csv(key):
     global self_tags_dir
     path = base_dir + key
     if not os.path.exists(path):
-        path = os.path.join(self_tags_dir, key.replace('\\extensions\\sd-webui-prompt-all-in-one\\tags\\', ''))
+        path = os.path.join(self_tags_dir, key.replace('\\custom_nodes\\WeiLin-ComfyUI-prompt-all-in-one\\local_complete_tags\\', ''))
         if not os.path.exists(path):
             return None
     return path

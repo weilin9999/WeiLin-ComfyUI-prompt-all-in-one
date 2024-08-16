@@ -1,0 +1,10 @@
+{
+    "appid": "",
+    "llmName": "qwen1_5-4b-chat-q2_k",
+    "n_gpu_layers": -1,
+    "preset": 
+    "你是一名AI提示词工程师，用提供的关键词构思一副精美的构图画面，只需要提示词，不要你的感受，自定义风格、场景、装饰等，尽量详细，用英文回复",
+    "secret": "",
+    "server": "llm",
+    "temperature": 1.2
+}

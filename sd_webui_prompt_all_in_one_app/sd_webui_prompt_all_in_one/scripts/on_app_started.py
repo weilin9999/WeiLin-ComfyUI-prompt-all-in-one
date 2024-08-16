@@ -20,7 +20,7 @@ from physton_prompt.history import History
 from physton_prompt.csv import get_csvs, get_csv
 from physton_prompt.styles import get_style_full_path, get_extension_css_list
 from physton_prompt.get_extra_networks import get_extra_networks
-from physton_prompt.packages import get_packages_state, install_package
+from physton_prompt.packages import get_packages_state, install_package, get_llm_packages_state,install_llm_package
 from physton_prompt.gen_openai import gen_openai
 from physton_prompt.get_lang import get_lang
 from physton_prompt.get_version import get_git_commit_version, get_git_remote_versions, get_latest_version
@@ -101,7 +101,27 @@ def on_app_started(_: gr.Blocks):
             'packages_state': get_packages_state(),
             'python': sys.executable,
         })
+    
+    # 新增LLM
+    @PromptServer.instance.routes.get("/weilin/physton_prompt/get_llm_config")
+    async def _get_config(request):
+        return web.json_response({
+            'packages_state': get_llm_packages_state(),
+            'python': sys.executable,
+        })
 
+    @PromptServer.instance.routes.post("/weilin/physton_prompt/install_llm_package")
+    async def _install_llm_package(request):
+        try:
+            data = await request.json()
+        except:
+            data = {}
+        if 'name' not in data:
+            return web.json_response({"result": get_lang('is_required', {'0': 'name'})})
+        if 'package' not in data:
+            return web.json_response({"result": get_lang('is_required', {'0': 'package'})})
+        return web.json_response({"result": install_llm_package(data['name'], data['package'])})
+    
     @PromptServer.instance.routes.post("/weilin/physton_prompt/install_package")
     async def _install_package(request):
         try:

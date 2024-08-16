@@ -6,6 +6,13 @@
 
 # 版本更新介绍
 
+> 3.5.0 版本介绍
+>
+> 0. 由于之前仓库上传了一些非常大的文件，2024-8-16 仓库进行了清空所以之前的仓库版本都删除了这是为了减小仓库大小
+> 1. 修复了已知 BUG
+> 2. 修改-恢复了以前旧版本的功能，支持了更多的节点搭配
+> 3. 新增-增加了本地 LLM 模型使用，可以帮你续写提示词
+
 > 3.0.0 版本介绍
 >
 > 1. 修复了已知 BUG
@@ -49,7 +56,7 @@
 
 # WeiLin-ComfyUI-Prompt-all-in-one 借鉴项目
 
-WeiLin-ComfyUI-Prompt-all-in-one ComfyUI 版的 prompt-all-in-one，在基于 sd-webui-prompt-all-in-one-app https://github.com/Physton/sd-webui-prompt-all-in-one-app 项目上修改而来的 ComfyUI 版本，只需要在 ComfyUI 中添加本项目的 ComfyUI 节点即可使用可视化的 tag 编辑器 ，提示词补全使用了 https://github.com/pythongosssss/ComfyUI-Custom-Scripts 项目进行修改只用了补全功能并做了修改
+WeiLin-ComfyUI-Prompt-all-in-one ComfyUI 版的 prompt-all-in-one，在基于 sd-webui-prompt-all-in-one-app https://github.com/Physton/sd-webui-prompt-all-in-one-app 项目上修改而来的 ComfyUI 版本，只需要在 ComfyUI 中添加本项目的 ComfyUI 节点即可使用可视化的 tag 编辑器 ，提示词补全使用了 https://github.com/pythongosssss/ComfyUI-Custom-Scripts 项目进行修改只用了补全功能并做了修改，项目使用的本地 LLM 大模型借鉴了https://github.com/thisjam/comfyui-sixgod_prompt仓库的代码
 
 如果你喜欢本项目赏一个 star 吧！
 

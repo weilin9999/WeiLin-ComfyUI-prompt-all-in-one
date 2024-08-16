@@ -6,6 +6,13 @@
 
 # Version update introduction
 
+> Version 3.5.0 Introduction
+>
+> 0. Because the warehouse uploaded some very large files before, 2024-8-16 warehouse was emptied, so the previous version of the warehouse was deleted in order to reduce the size of the warehouse
+> 1. Fixed known bugs
+> 2. Modified - Restores the functions of the previous version and supports more node collocation
+> 3. New - Added the use of local LLM model to help you continue writing prompts
+
 > Version 3.0.0 Introduction
 >
 > 1. Fixed known bugs
@@ -49,7 +56,7 @@ Use it as follows
 
 # WeiLin-ComfyUI-Prompt-all-in-one Reference project
 
-WeiLin-ComfyUI-Prompt-all-in-one The ComfyUI version of prompt-all-in-one, a ComfyUI version modified based on the SD-wewe-prompt-all-in-one-app https://github.com/Physton/sd-webui-prompt-all-in-one-app project, Just add the ComfyUI node of the project to ComfyUI to use the visual tag editor. Cue word completion using the https://github.com/pythongosssss/ComfyUI-Custom-Scripts project changes only the function of the completion and make the changes
+WeiLin-ComfyUI-Prompt-all-in-one The ComfyUI version of prompt-all-in-one, a ComfyUI version modified based on the SD-wewe-prompt-all-in-one-app https://github.com/Physton/sd-webui-prompt-all-in-one-app project, Just add the ComfyUI node of the project to ComfyUI to use the visual tag editor. Cue word completion using the https://github.com/pythongosssss/ComfyUI-Custom-Scripts project changes only the function of the completion and make the changes, Projects using local LLM big model borrowed from https://github.com/thisjam/comfyui-sixgod_prompt warehouse code
 
 # A brief description of this item
 

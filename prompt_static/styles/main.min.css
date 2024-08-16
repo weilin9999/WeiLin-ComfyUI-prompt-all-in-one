@@ -5704,3 +5704,26 @@
         opacity: 1;
     }
 }
+
+/* weilin 新增 */
+.llm-btn {
+    width: fit-content;
+    padding: 10px;
+    background-color: #1196c9;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.llm-btn:hover {
+    background-color: #157da7;
+}
+
+.llm-content {
+    margin-top: var(--ppb-bm-bb-bg-groupContent-margin-top);
+    width: var(--ppb-bm-bb-bg-groupContent-width);
+    height: var(--ppb-bm-bb-bg-groupContent-height);
+    resize: var(--ppb-bm-bb-bg-groupContent-resize);
+    background: var(--ppb-bm-bb-bg-groupContent-background);
+    border: var(--ppb-bm-bb-bg-groupContent-border);
+    color: var(--ppb-bm-bb-bg-groupContent-color);
+}

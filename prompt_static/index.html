@@ -369,7 +369,6 @@
     const window_type =  searchParams.get('type')
     const theme =  searchParams.get('__theme')
     thisRandomId = localStorage.getItem("weilin_prompt_randomid");
-    const onFirst = localStorage.getItem("weilin_prompt_onfirst");
     const getTheme = localStorage.getItem("weilin_prompt_theme");
     let getBoxStatus = localStorage.getItem("weilin_prompt_box_status");
     const weilin_fullBtn = document.getElementById("weilin_fullBtn")
@@ -381,6 +380,10 @@
     let getIsWindowMode = localStorage.getItem("weilin_prompt_ui_is_window")
     new ClipboardJS(weilinCopyGreatPrompt);
     new ClipboardJS(weilinCopyNegPrompt);
+
+
+    const ge_box = document.getElementById('component-5173')
+    const ng_box = document.getElementById('component-5178')
 
     // console.log(getBoxStatus)
     if(getBoxStatus == null){
@@ -406,6 +409,7 @@
         weilin_fullBtn.style.display = "none"
         weilin_nomBtn.style.display = "none"
     }
+
     // 监听checkbox
     weilin_prompt_ui_is_window_fomt.addEventListener('change', function(e) {
         if(e.target.checked){
@@ -488,6 +492,17 @@
     const log2 = document.getElementById("weilin_prompt_text_neg_input");
     log2.addEventListener("input", updateValue);
 
+    
+    document.addEventListener("weilinPromptInnerSendToGreat",e =>{
+        // console.log(e.detail.text)
+        log.value = e.detail.text
+                
+    },false)
+
+    document.addEventListener("weilinPromptInnerSendToNeg",e =>{
+        // console.log(e.detail.text)
+        log2.value = e.detail.text
+    },false)
 
     window.addEventListener('message', e => {
         // console.log(e.data)
@@ -499,13 +514,39 @@
                 if(e.data.type == 'prompt'){
                     const editingBox = document.getElementById('yourIsEditing')
                     const notePromptBox = document.getElementById('notePromptBox')
-                    editingBox.innerText="你正在编辑提示词 反向提示词不支持Lora"
-                    notePromptBox.style.display = "flex"
+
+                    if(e.data.nodeName == "WeiLinComfyUIPromptToLorasOnly"){
+                        editingBox.innerText="你正在编辑提示词 提示词可以使用Lora自动加载"
+                        ge_box.style.display = "block"
+                        ng_box.style.display = "none"
+                    }else if(e.data.nodeName == "WeiLinComfyUIPromptAllInOneGreat"){
+                        editingBox.innerText="你正在编辑正向提示词"
+                        ge_box.style.display = "block"
+                        ng_box.style.display = "none"
+                    }else if(e.data.nodeName == "WeiLinComfyUIPromptAllInOneNeg"){
+                        editingBox.innerText="你正在编辑反向提示词"
+                        ge_box.style.display = "none"
+                        ng_box.style.display = "block"
+                    }else if( "WeiLinPromptToString"){
+                        editingBox.innerText="你正在编辑提示词"
+                        ge_box.style.display = "block"
+                        ng_box.style.display = "block"
+                    }else {
+                        editingBox.innerText="你正在编辑提示词 反向提示词不支持Lora自动加载"
+                        ge_box.style.display = "block"
+                        ng_box.style.display = "block"
+                    }
+
+                    editingBox.style.display = "flex"
+                    notePromptBox.style.display="none"
                 }else if(e.data.type == 'global'){
                     const editingBox = document.getElementById('yourIsEditing')
                     const notePromptBox = document.getElementById('notePromptBox')
                     editingBox.innerText="你正在使用临时提示词模式，该模式下仅用于对提示词的临时使用无法同步到节点中"
-                    notePromptBox.style.display = "none"
+                    notePromptBox.style.display = "flex"
+
+                    ge_box.style.display = "block"
+                    ng_box.style.display = "block"
                 }
             }
         }else if(e.data.handel == 'responeseWeiLinPrompt'){
@@ -515,13 +556,39 @@
             if(e.data.type == 'prompt'){
                 const editingBox = document.getElementById('yourIsEditing')
                 const notePromptBox = document.getElementById('notePromptBox')
-                editingBox.innerText="你正在编辑提示词 反向提示词不支持Lora"
-                notePromptBox.style.display = "flex"
+
+                if(e.data.nodeName == "WeiLinComfyUIPromptToLorasOnly"){
+                    editingBox.innerText="你正在编辑提示词 提示词可以使用Lora自动加载"
+                    ge_box.style.display = "block"
+                    ng_box.style.display = "none"
+                }else if(e.data.nodeName == "WeiLinComfyUIPromptAllInOneGreat"){
+                    editingBox.innerText="你正在编辑正向提示词"
+                    ge_box.style.display = "block"
+                    ng_box.style.display = "none"
+                }else if(e.data.nodeName == "WeiLinComfyUIPromptAllInOneNeg"){
+                    editingBox.innerText="你正在编辑反向提示词"
+                    ge_box.style.display = "none"
+                    ng_box.style.display = "block"
+                }else if( "WeiLinPromptToString"){
+                    editingBox.innerText="你正在编辑提示词"
+                    ge_box.style.display = "block"
+                    ng_box.style.display = "block"
+                }else {
+                    editingBox.innerText="你正在编辑提示词 反向提示词不支持Lora自动加载"
+                    ge_box.style.display = "block"
+                    ng_box.style.display = "block"
+                }
+                
+                editingBox.style.display = "flex"
+                notePromptBox.style.display="none"
             }else if(e.data.type == 'global'){
                 const editingBox = document.getElementById('yourIsEditing')
                 const notePromptBox = document.getElementById('notePromptBox')
                 editingBox.innerText="你正在使用临时提示词模式，该模式下仅用于对提示词的临时使用无法同步到节点中"
-                notePromptBox.style.display = "none"
+                notePromptBox.style.display = "flex"
+
+                ge_box.style.display = "block"
+                ng_box.style.display = "block"
             }
         }else if(e.data.handel == 'fullBoxWeilinPromptBoxResponse'){
             getBoxStatus = localStorage.getItem("weilin_prompt_box_status");

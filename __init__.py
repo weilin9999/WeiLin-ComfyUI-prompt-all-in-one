@@ -9,8 +9,74 @@ import folder_paths
 import comfy.utils
 import logging
 import re
+import ctypes
 
-#提示词编辑器 转 STRING
+
+# 正向提示词 STRING
+class WeiLinComfyUIPromptAllInOneGreat:
+
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "positive": ("STRING", {
+                    "multiline": True,
+                    "default": "",
+                    "placeholder": "输入正向提示词",
+                })
+            },
+        }
+
+    RETURN_TYPES = ("STRING",)
+
+    RETURN_NAMES = ("正向 STRING",)
+
+    FUNCTION = "encode"
+
+    #OUTPUT_NODE = False
+
+    CATEGORY = "WeiLin Nodes (WeiLin节点)"
+
+    def encode(self, positive):
+        textA= extract_tags(positive)
+        return (textA)
+
+# 反向提示词 STRING
+class WeiLinComfyUIPromptAllInOneNeg:
+
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "negative": ("STRING", {
+                    "multiline": True,
+                    "default": "",
+                    "placeholder": "输入反向提示词",
+                })
+            },
+        }
+
+    RETURN_TYPES = ("STRING",)
+
+    RETURN_NAMES = ("反向 STRING",)
+
+    FUNCTION = "encode"
+
+    #OUTPUT_NODE = False
+
+    CATEGORY = "WeiLin Nodes (WeiLin节点)"
+
+    def encode(self, negative):
+        textB= extract_tags(negative)
+        return (textB)
+
+#提示词编辑器 二合一 转 STRING
 class WeiLinPromptToString:
 
     def __init__(self):
@@ -136,6 +202,85 @@ class WeiLinComfyUIPromptToLoras:
         outputB = clip_secondB.encode_from_tokens(tokensB, return_pooled=True, return_dict=True)
         condB = outputB.pop("cond")
         return (model_lora_secondA,[[condA, outputA]],[[condB, outputB]])
+        # return (model_lora_second, clip_lora_second)
+
+# 仅正向提示词的Lora自动加载器
+class WeiLinComfyUIPromptToLorasOnly:
+
+    def __init__(self):
+        self.loaded_loraA = None
+    
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "model": ("MODEL",),
+                "clip": ("CLIP", ),
+                "positive": ("STRING", {
+                    "multiline": True,
+                    "default": "",
+                    "placeholder": "输入正向提示词",
+                })
+            },
+        }
+
+    # RETURN_TYPES = ("STRING",)
+    # RETURN_TYPES = ("MODEL", "CLIP")
+    RETURN_TYPES = ("MODEL", "CONDITIONING",)
+    RETURN_NAMES = ("model","正向条件 CONDITIONING",)
+
+    # FUNCTION = "encode"
+    FUNCTION = "load_lora_great"
+
+    #OUTPUT_NODE = False
+
+    CATEGORY = "WeiLin Nodes (WeiLin节点)"
+    
+    # 加载Lora
+    def load_lora_great(self, model, clip, positive):
+        model_lora_secondA = model
+        clip_lora_secondA = clip
+
+        # 当模型不为空时
+        if model != None:
+            #处理正向
+            arr,rel_str = replaceStrFunc(positive)
+            for str_lora_item in arr:
+                loar_sim_path,str_n_arr = getStrLoraName(str_lora_item)
+                # print(loar_sim_path,str_n_arr)
+                print(str_n_arr)
+                strength_model = 1
+                strength_clip = 1
+                if len(str_n_arr) > 0:
+                    if len(str_n_arr) == 1:
+                        strength_model = float(str_n_arr[0])
+                        strength_clip = float(str_n_arr[0])
+                    if len(str_n_arr) > 1:
+                        strength_model = float(str_n_arr[0])
+                        strength_clip = float(str_n_arr[1])
+                
+                lora_path = folder_paths.get_full_path("loras", loar_sim_path)
+                lora = None
+                if self.loaded_loraA is not None:
+                    if self.loaded_loraA[0] == lora_path:
+                        lora = self.loaded_loraA[1]
+                    else:
+                        temp = self.loaded_loraA
+                        self.loaded_loraA = None
+                        del temp
+
+                if lora is None:
+                    lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
+                    self.loaded_loraA = (lora_path, lora)
+
+                model_lora_secondA, clip_lora_secondA = load_lora_for_models(model_lora_secondA, clip_lora_secondA, lora, strength_model, strength_clip)
+
+        # prompt正向返回
+        tokensA = clip_lora_secondA.tokenize(rel_str)
+        outputA = clip_lora_secondA.encode_from_tokens(tokensA, return_pooled=True, return_dict=True)
+        condA = outputA.pop("cond")
+
+        return (model_lora_secondA,[[condA, outputA]])
         # return (model_lora_second, clip_lora_second)
 
 
@@ -283,20 +428,42 @@ app_start()
 # 启动LoraInfo路由
 from .script.lorainfo import loraInfoApp
 loraInfoApp()
-
+# 启动LLM大模型路由
+from .script.llm_server import runLLMServerAPP 
+runLLMServerAPP()
 
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
 NODE_CLASS_MAPPINGS = {
     "WeiLinPromptToString": WeiLinPromptToString,
     "WeiLinComfyUIPromptToLoras": WeiLinComfyUIPromptToLoras,
+    "WeiLinComfyUIPromptToLorasOnly": WeiLinComfyUIPromptToLorasOnly,
+    "WeiLinComfyUIPromptAllInOneGreat": WeiLinComfyUIPromptAllInOneGreat,
+    "WeiLinComfyUIPromptAllInOneNeg": WeiLinComfyUIPromptAllInOneNeg,
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
-NODE_DISPLAY_NAME_MAPPINGS = {
-    "WeiLinPromptToString": "WeiLin提示词转String - Prompt To String",
-    "WeiLinComfyUIPromptToLoras": "WeiLin提示词Lora自动加载 - Prompt To AutoLoras",
-}
+NODE_DISPLAY_NAME_MAPPINGS = {}
+
+# 检测系统语言
+dll_h = ctypes.windll.kernel32
+windowLocal = (hex(dll_h.GetSystemDefaultUILanguage()))
+if windowLocal == '0xC04' or windowLocal == '0x804' or windowLocal == '0x404':
+    NODE_DISPLAY_NAME_MAPPINGS = {
+        "WeiLinPromptToString": "WeiLin 二合一提示词转String",
+        "WeiLinComfyUIPromptToLoras": "WeiLin 二合一提示词Lora自动加载",
+        "WeiLinComfyUIPromptToLorasOnly": "WeiLin 正向提示词Lora自动加载",
+        "WeiLinComfyUIPromptAllInOneGreat": "WeiLin 正向提示词转String",
+        "WeiLinComfyUIPromptAllInOneNeg": "WeiLin 反向提示词转String",
+    }
+else:
+    NODE_DISPLAY_NAME_MAPPINGS = {
+        "WeiLinPromptToString": "WeiLin TwoInOne Prompt To String",
+        "WeiLinComfyUIPromptToLoras": "WeiLin TwoInOne Prompt To AutoLoras",
+        "WeiLinComfyUIPromptToLorasOnly": "WeiLin Positive Prompt To AutoLoras",
+        "WeiLinComfyUIPromptAllInOneGreat": "WeiLin Positive Prompt To String",
+        "WeiLinComfyUIPromptAllInOneNeg": "WeiLin Negative Prompt To String",
+    }
 
 WEB_DIRECTORY = "./js"
 

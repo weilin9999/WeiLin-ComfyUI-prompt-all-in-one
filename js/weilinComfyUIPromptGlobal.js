@@ -1,6 +1,7 @@
 import { app } from '../../scripts/app.js'
 
-// 全局
+// 全局注册
+
 let onlyOne = false
 let global_randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
 
@@ -365,10 +366,10 @@ app.registerExtension({
                 iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
             }
             
-            if(!isFirstOpen){
-                isFirstOpen = true
-                iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
-            }
+            // if(!isFirstOpen){
+            //     isFirstOpen = true
+            //     iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
+            // }
 
             let getIsWindowMode = localStorage.getItem("weilin_prompt_ui_is_window")
             const getBoxStatus = localStorage.getItem("weilin_prompt_box_status");

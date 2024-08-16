@@ -1,0 +1,2 @@
+请前往该仓库的Release中找到自己对应的包安装在这里，并将文件命名为llama_cpp_python，然后重新点击安装，插件会自己寻找
+https://github.com/abetlen/llama-cpp-python

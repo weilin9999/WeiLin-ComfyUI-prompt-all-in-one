@@ -1,6 +1,6 @@
 import { app } from '../../scripts/app.js'
 
-// 正向提示词
+// 提示词 Node
 
 let global_randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
 
@@ -13,16 +13,18 @@ app.registerExtension({
 
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
     // console.log(app)
-    if (nodeData.name === "WeiLinPromptToString" || nodeData.name === "WeiLinComfyUIPromptToLoras") {
+    if (
+      nodeData.name === "WeiLinPromptToString" || nodeData.name === "WeiLinComfyUIPromptToLoras"
+      || nodeData.name === "WeiLinComfyUIPromptToLorasOnly" || nodeData.name === "WeiLinComfyUIPromptAllInOneGreat"
+      || nodeData.name === "WeiLinComfyUIPromptAllInOneNeg"
+    ) {
       // console.log(nodeData)
       // Create node
       const onNodeCreated = nodeType.prototype.onNodeCreated;
       nodeType.prototype.onNodeCreated = async function () {
         const r = onNodeCreated ? onNodeCreated.apply(this, arguments): undefined;
 
-        let EasyCaptureNode = app.graph._nodes.filter(
-          (wi) => (wi.type == "WeiLinPromptToString" || wi.type == "WeiLinComfyUIPromptToLoras")
-        );
+        const thisNodeName = nodeData.name // 存储当前的节点名称
 
         for (let index = 0; index < this.widgets.length; index++) {
           const element = this.widgets[index];
@@ -60,8 +62,10 @@ app.registerExtension({
 
           // element.element.value
           for (let index = 0; index < window.length; index++) {
+            const gValue = thisInputElements.g == null ? "":thisInputElements.g.value;
+            const nValue = thisInputElements.n == null ? "":thisInputElements.n.value;
             window[index].postMessage({handel: 'openWeiLinPrompt',
-              g_value: thisInputElements.g.value,n_value: thisInputElements.n.value,randomid: randomID,type: 'prompt'}, "*");
+              g_value: gValue,n_value: nValue,randomid: randomID,type: 'prompt',nodeName: thisNodeName}, "*");
           }
 
           const ui_theme = localStorage.getItem("weilin_prompt_theme");
@@ -75,11 +79,13 @@ app.registerExtension({
             iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
           }
 
-          if(!isFirstOpen){
-            isFirstOpen = true
-            localStorage.setItem("weilin_prompt_onfirst", 1);
-            iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
-          }
+          // if(!isFirstOpen){
+          //   isFirstOpen = true
+          //   localStorage.setItem("weilin_prompt_onfirst", 1);
+          //   iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
+          // }
+
+          localStorage.setItem("weilin_prompt_open_mode",thisNodeName);
 
           let getIsWindowMode = localStorage.getItem("weilin_prompt_ui_is_window")
           const getBoxStatus = localStorage.getItem("weilin_prompt_box_status");
@@ -144,11 +150,19 @@ app.registerExtension({
           // console.log(e.data,randomID)
           if(e.data.handel == 'changeWeiLinPrompt' && e.data.randomid == randomID)
           {
-            thisInputElements.g.value = e.data.g_value
-            thisInputElements.n.value = e.data.n_value
+            if(thisInputElements.g != null){
+              thisInputElements.g.value = e.data.g_value
+            }
+            if(thisInputElements.n != null){
+              thisInputElements.n.value = e.data.n_value
+            }
           }else if(e.data.handel  == 'closeWeilinPromptBox' && e.data.randomid == randomID){
-            thisInputElements.g.readOnly = false
-            thisInputElements.n.readOnly = false
+            if(thisInputElements.g != null){
+              thisInputElements.g.readOnly = false
+            }
+            if(thisInputElements.n != null){
+              thisInputElements.n.readOnly = false
+            }
             const ifreamBox = document.getElementById('weilin_bg_box_global')
             ifreamBox.style.display = "none"
           }else if(e.data.handel == 'getWeilinPromptBox' && e.data.randomid == randomID){
@@ -163,8 +177,10 @@ app.registerExtension({
                 innerBox.style.backgroundColor = "#02b7fd";
             }
             for (let index = 0; index < window.length; index++) {
+              const gValue = thisInputElements.g == null ? "":thisInputElements.g.value;
+              const nValue = thisInputElements.n == null ? "":thisInputElements.n.value;
               window[index].postMessage({handel: 'responeseWeiLinPrompt',
-                g_value: thisInputElements.g.value,n_value: thisInputElements.n.value,randomid: randomID,type: 'prompt'}, "*");
+                g_value: gValue,n_value: nValue,randomid: randomID,type: 'prompt',nodeName: thisNodeName}, "*");
             }
           }else if(e.data.handel == 'refreshWeilinPromptBox'){
             const ui_theme = localStorage.getItem("weilin_prompt_theme");
@@ -187,7 +203,7 @@ app.registerExtension({
             iframeEle.style.minHeight="100%"
             iframeEle.style.minWidth="100%"
             for (let index = 0; index < window.length; index++) {
-              window[index].postMessage({handel: 'fullBoxWeilinPromptBoxResponse',randomid: randomID}, "*");
+              window[index].postMessage({handel: 'fullBoxWeilinPromptBoxResponse',randomid: randomID,nodeName: thisNodeName}, "*");
             }
           }else if(e.data.handel == 'nomBoxWeilinPromptBox'){
             localStorage.setItem("weilin_prompt_box_status","nom");
@@ -195,7 +211,7 @@ app.registerExtension({
             iframeEle.style.minHeight="80%"
             iframeEle.style.minWidth="80%"
             for (let index = 0; index < window.length; index++) {
-              window[index].postMessage({handel: 'nomBoxWeilinPromptBoxResponse',randomid: randomID}, "*");
+              window[index].postMessage({handel: 'nomBoxWeilinPromptBoxResponse',randomid: randomID,nodeName: thisNodeName}, "*");
             }
           }else if(e.data.handel == 'changeWeilinPromptWindowMode'){
             const iframeEle = document.getElementById('weilin_prompt_global_box')
