@@ -3,10 +3,10 @@ import requests
 import json
 import os
 import sys
-appendPath = os.path.join(os.path.dirname(__file__), "./")
+appendPath = os.path.join(os.path.dirname(__file__), "../")
 sys.path.append(appendPath)
 import llm.llm as llmc
-import Translator
+import llm.Translator as Translator
 
 
 class LLMTranslator(Translator.TranslatorInterface):
