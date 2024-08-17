@@ -4,6 +4,7 @@ import { app } from '../../scripts/app.js'
 
 let onlyOne = false
 let global_randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
+localStorage.setItem("weilin_prompt_ui_onfirst", 0);
 
 app.registerExtension({
   name: "weilin.prompt_global",
@@ -344,7 +345,6 @@ app.registerExtension({
         let thisInputGreatElement = document.getElementById("weilin_global_great_prompt_input")
         let thisInputNegElement = document.getElementById("weilin_global_neg_prompt_input")
         let randomID = ''
-        let isFirstOpen = false
 
         document.addEventListener("openWeilinGlobalPromptBox", function (event) {
             randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
@@ -366,10 +366,11 @@ app.registerExtension({
                 iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
             }
             
-            // if(!isFirstOpen){
-            //     isFirstOpen = true
-            //     iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
-            // }
+            const isFirstOpen = localStorage.getItem("weilin_prompt_ui_onfirst");
+            if(isFirstOpen == 0){
+                localStorage.setItem("weilin_prompt_ui_onfirst",1);
+                iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
+            }
 
             let getIsWindowMode = localStorage.getItem("weilin_prompt_ui_is_window")
             const getBoxStatus = localStorage.getItem("weilin_prompt_box_status");

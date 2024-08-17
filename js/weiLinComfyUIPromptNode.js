@@ -40,7 +40,6 @@ app.registerExtension({
 
         let thisInputElements = {g:null,n:null}
         let randomID = ''
-        let isFirstOpen = false
 
         this.addWidget("button", "打开可视化PromptUI", '', ($e) => {
           randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
@@ -79,11 +78,12 @@ app.registerExtension({
             iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
           }
 
-          // if(!isFirstOpen){
-          //   isFirstOpen = true
-          //   localStorage.setItem("weilin_prompt_onfirst", 1);
-          //   iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
-          // }
+          const isFirstOpen = localStorage.getItem("weilin_prompt_ui_onfirst");
+
+          if(!isFirstOpen){
+            localStorage.setItem("weilin_prompt_ui_onfirst",1);
+            iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
+          }
 
           localStorage.setItem("weilin_prompt_open_mode",thisNodeName);
 
