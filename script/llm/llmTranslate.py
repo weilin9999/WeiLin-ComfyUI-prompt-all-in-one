@@ -3,19 +3,19 @@ import requests
 import json
 import os
 import sys
-appendPath = os.path.join(os.path.dirname(__file__), "../")
-sys.path.append(appendPath)
-import llm.llm as llmc
-import llm.Translator as Translator
+dirPath = os.path.join(os.path.dirname(__file__), "../")
+sys.path.append(dirPath)
+from llm.llm import chat,chat_imagine
+from llm.Translator import TranslatorInterface,translate_text
 
 
-class LLMTranslator(Translator.TranslatorInterface):
+class LLMTranslator(TranslatorInterface):
      def translate(self,text: str,settings) -> str:  
         # settings['preset']='Translate Chinese into English'
-        return llmc.chat(text,**settings)
+        return chat(text,**settings)
 
 # 测试专用
-class LLMTranslatorTest(Translator.TranslatorInterface):
+class LLMTranslatorTest(TranslatorInterface):
      def translate(self,text: str,settings) -> str:
         temp = {
             "appid": "",
@@ -26,7 +26,7 @@ class LLMTranslatorTest(Translator.TranslatorInterface):
             "server": "llm",
             "temperature": 1.2
         }
-        return llmc.chat(text,**temp)
+        return chat(text,**temp)
 
 
 if __name__ == '__main__':
@@ -35,6 +35,6 @@ if __name__ == '__main__':
     text="今天天气非常不错，我们出去玩吧"
     modelName='qwen/qwen1_5-4b-chat-q5_k_m'
     llm_translator = LLMTranslator()
-    res =Translator.translate_text(llm_translator,text,modelName)
+    res =translate_text(llm_translator,text,modelName)
     # print(res)
             
