@@ -62,7 +62,7 @@ async def get_extra_networks():
                 # "sd_version": lora_on_disk.sd_version.name,
             }
         # item["prompt"] = quote_js(f"<lora:{item_path}:1") + quote_js(">")
-        item["prompt"] = f"<lora:{item_path}:1:1>"
+        item["prompt"] = f"<lora:{item_path}:"
         item["local_info"] = info_data
         # item["search_terms"] = ["Lora\\"+item_path]
         items.append(item)

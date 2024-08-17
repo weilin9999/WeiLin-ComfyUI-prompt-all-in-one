@@ -6,6 +6,12 @@
 
 # Version update introduction
 
+> 3.6.1 Version Introduction
+>
+> 1. Fixed known bugs
+> 2. New - In Global Mode, you can enable the Paste board mode. In this mode, you can click any input box in the node to pop up the paste board in global mode
+> 3. Fix the -String return string issue
+
 > Version 3.5.0 Introduction
 >
 > 0. Because the warehouse uploaded some very large files before, 2024-8-16 warehouse was emptied, so the previous version of the warehouse was deleted in order to reduce the size of the warehouse

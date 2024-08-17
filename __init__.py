@@ -41,8 +41,7 @@ class WeiLinComfyUIPromptAllInOneGreat:
     CATEGORY = "WeiLin Nodes (WeiLin节点)"
 
     def encode(self, positive):
-        textA= extract_tags(positive)
-        return (textA)
+        return (positive)
 
 # 反向提示词 STRING
 class WeiLinComfyUIPromptAllInOneNeg:
@@ -73,8 +72,7 @@ class WeiLinComfyUIPromptAllInOneNeg:
     CATEGORY = "WeiLin Nodes (WeiLin节点)"
 
     def encode(self, negative):
-        textB= extract_tags(negative)
-        return (textB)
+        return (negative)
 
 #提示词编辑器 二合一 转 STRING
 class WeiLinPromptToString:
@@ -110,9 +108,7 @@ class WeiLinPromptToString:
     CATEGORY = "WeiLin Nodes (WeiLin节点)"
 
     def encode(self, positive,negative):
-        textA= extract_tags(positive)
-        textB= extract_tags(negative)
-        return (textA,textB)
+        return (positive,negative)
 
 
 # 提示词适配Lora加载器
@@ -283,17 +279,6 @@ class WeiLinComfyUIPromptToLorasOnly:
         return (model_lora_secondA,[[condA, outputA]])
         # return (model_lora_second, clip_lora_second)
 
-
-def extract_tags(text):
-    pattern = r'#\[(.*?)\]'
-    matches=re.findall(pattern, text)  
-    for i in matches:
-        newarr=i.split(',')
-        random.seed(random.random())
-        rdindex=random.randint(0,len(newarr)-1)
-        rdtext=newarr[rdindex]
-        text = re.sub(pattern, rdtext, text,count=1)
-    return text
 
 
 

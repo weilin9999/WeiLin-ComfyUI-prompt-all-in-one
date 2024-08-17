@@ -3,6 +3,7 @@ import { app } from '../../scripts/app.js'
 // 提示词 Node
 
 let global_randomID = (Math.random() + new Date().getTime()).toString(32).slice(0,8); // 随机种子ID
+localStorage.setItem("weilin_prompt_ui_onfirst", 0);
 
 app.registerExtension({
   name: "weilin.prompt_node_to_string",
@@ -79,8 +80,7 @@ app.registerExtension({
           }
 
           const isFirstOpen = localStorage.getItem("weilin_prompt_ui_onfirst");
-
-          if(!isFirstOpen){
+          if(isFirstOpen == 0){
             localStorage.setItem("weilin_prompt_ui_onfirst",1);
             iframeEle.src = `./weilin/web_ui/index.html?type=prompt&refid=${global_randomID}&__theme=${ui_theme}`
           }

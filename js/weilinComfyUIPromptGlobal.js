@@ -155,6 +155,33 @@ app.registerExtension({
             background-color: #9f9f9f;
             border-radius: 20px;
         }
+
+        .weilin-floating-button {
+            position: absolute;
+            display: none;
+            top: 41px;
+            left: 315px;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 6px;
+            padding: 5px;
+            z-index: 1000;
+        }
+
+        .weilin-option-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .weilin-option-btn{
+            background: #91919187;
+            padding: 5px;
+            font-size: 12px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
     `;
     document.head.appendChild(style)
 
@@ -228,6 +255,109 @@ app.registerExtension({
         }
     `
     document.body.appendChild(script);
+
+    // 全局粘贴浮窗
+    const globalPastWindowBox = document.createElement('div')
+    globalPastWindowBox.innerHTML = `
+        <div style="font-size: 13px;color: #fff;padding-bottom: 5px;">WeiLin全局提示词</div>
+        <div class="weilin-option-buttons">
+            <div class="weilin-option-btn" id="weilin_positiveButton">替换为正向提示词</div>
+            <div class="weilin-option-btn" id="weilin_negativeButton">替换为反向提示词</div>
+        </div>
+    `
+    globalPastWindowBox.className = "weilin-floating-button"
+    globalPastWindowBox.id = "weilinFloatingButton"
+    document.body.appendChild(globalPastWindowBox);
+
+    // 对应的JavaScript
+    const globalPastScript = document.createElement("script");
+    globalPastScript.type = "text/javascript";
+    globalPastScript.text = `
+        const floatingButton = document.getElementById('weilinFloatingButton');
+        let activeTextarea = null;
+        let isFloatingButtonVisible = false;
+
+        function findTextarea(event) {
+            return document.elementFromPoint(event.clientX, event.clientY).closest('textarea');
+        }
+
+        function showFloatingButton(event) {
+            if (!isFloatingButtonVisible) {
+                activeTextarea = findTextarea(event);
+                if (activeTextarea) {
+                    floatingButton.style.display = 'flex';
+                    floatingButton.style.top = event.clientY + 'px';
+                    floatingButton.style.left = (event.clientX + 10) + 'px';
+                    isFloatingButtonVisible = true;
+
+                    const positiveButton = document.getElementById('weilin_positiveButton');
+                    const negativeButton = document.getElementById('weilin_negativeButton');
+                    positiveButton.style.display="block"
+                    negativeButton.style.display="block"
+
+                    let thisInputGreatElement = document.getElementById("weilin_global_great_prompt_input")
+                    let thisInputNegElement = document.getElementById("weilin_global_neg_prompt_input")
+                    if(thisInputGreatElement.value.length <= 0){
+                        positiveButton.style.display="none"
+                    }
+                    if(thisInputNegElement.value.length <= 0){
+                        negativeButton.style.display="none"
+                    }
+
+                    positiveButton.addEventListener('click', function () {
+                        let thisInputGreatElement = document.getElementById("weilin_global_great_prompt_input")
+                        activeTextarea.value = thisInputGreatElement.value
+                    });
+
+                    negativeButton.addEventListener('click', function () {
+                        let thisInputNegElement = document.getElementById("weilin_global_neg_prompt_input")
+                        activeTextarea.value = thisInputNegElement.value
+                    });
+                }
+            } else {
+                // If the user clicks on a different textarea, hide the current floating button and show it for the new textarea.
+                if (activeTextarea !== findTextarea(event)) {
+                    hideFloatingButton();
+                    showFloatingButton(event);
+                }
+            }
+        }
+
+        function hideFloatingButton() {
+            floatingButton.style.display = 'none';
+            isFloatingButtonVisible = false;
+        }
+
+        document.addEventListener('mousedown', function (event) {
+            let thisInputGreatElement = document.getElementById("weilin_global_great_prompt_input")
+            let thisInputNegElement = document.getElementById("weilin_global_neg_prompt_input")
+            if(thisInputGreatElement.value.length > 0 || thisInputNegElement.value.length > 0){
+                const getConfig = localStorage.getItem("weilin_prompt_global_past_setting")
+                if(getConfig == 1){
+                    if (event.target.tagName.toLowerCase() === 'textarea') {
+                        showFloatingButton(event);
+                    }
+                }
+            }
+        });
+
+        window.addEventListener('click', function (event) {
+            let thisInputGreatElement = document.getElementById("weilin_global_great_prompt_input")
+            let thisInputNegElement = document.getElementById("weilin_global_neg_prompt_input")
+            if(thisInputGreatElement.value.length > 0 || thisInputNegElement.value.length > 0){
+                const getConfig = localStorage.getItem("weilin_prompt_global_past_setting")
+                if(getConfig == 1){
+                    if (!floatingButton.contains(event.target) && !activeTextarea.contains(event.target)) {
+                        hideFloatingButton();
+                    }
+                }
+            }
+        });
+    `
+    document.body.appendChild(globalPastScript);
+
+
+    // 主框架
 
     const hasIframeBox = document.getElementById('weilin_bg_box_global')
     if(hasIframeBox == null){
@@ -352,7 +482,7 @@ app.registerExtension({
 
             for (let index = 0; index < window.length; index++) {
                 window[index].postMessage({handel: 'openWeiLinPrompt',
-                    g_value: thisInputGreatElement.value,n_value: thisInputNegElement.value,randomid: randomID,type: 'prompt'}, "*");
+                    g_value: thisInputGreatElement.value,n_value: thisInputNegElement.value,randomid: randomID,type: 'global'}, "*");
             }
 
             const ui_theme = localStorage.getItem("weilin_prompt_theme");
@@ -478,7 +608,7 @@ app.registerExtension({
                 iframeEle.style.minHeight="100%"
                 iframeEle.style.minWidth="100%"
                 for (let index = 0; index < window.length; index++) {
-                    window[index].postMessage({handel: 'fullBoxWeilinPromptBoxResponse',randomid: randomID}, "*");
+                    window[index].postMessage({handel: 'fullBoxWeilinPromptBoxResponse',randomid: randomID,type: 'global'}, "*");
                 }
             }else if(e.data.handel == 'nomBoxWeilinPromptBox'){
                 localStorage.setItem("weilin_prompt_box_status","nom");
@@ -486,7 +616,7 @@ app.registerExtension({
                 iframeEle.style.minHeight="80%"
                 iframeEle.style.minWidth="80%"
                 for (let index = 0; index < window.length; index++) {
-                    window[index].postMessage({handel: 'nomBoxWeilinPromptBoxResponse',randomid: randomID}, "*");
+                    window[index].postMessage({handel: 'nomBoxWeilinPromptBoxResponse',randomid: randomID,type: 'global'}, "*");
                 }
             }else if(e.data.handel == 'changeWeilinPromptWindowMode'){
                 const iframeEle = document.getElementById('weilin_prompt_global_box')
