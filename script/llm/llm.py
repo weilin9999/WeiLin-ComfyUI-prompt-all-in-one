@@ -6,9 +6,9 @@ import random
 
 # from llama_cpp import Llama
 try:
-      from llama_cpp import Llama
-      extension_path = os.path.abspath(os.path.join(os.path.dirname(__file__),'../../models'))
-      def chat(question,**kwargs):
+    from llama_cpp import Llama
+    extension_path = os.path.abspath(os.path.join(os.path.dirname(__file__),'../../models'))
+    def chat(question,**kwargs):
         llm = Llama(
             model_path=os.path.join(extension_path,kwargs['llmName'])+'.gguf',
             n_gpu_layers=int(kwargs['n_gpu_layers']),
@@ -24,17 +24,20 @@ try:
             temperature=float(kwargs['temperature'])
 
         )
-    
         return(res['choices'][0]["message"]['content'])
-      
-         
-      def chat_imagine(question,settings):
-          return chat(question,**settings)
-
+    
+        
+    def chat_imagine(question,settings):
+        return chat(question,**settings)
 
 except Exception as e:
-     err_msg='找不到llama_cpp模块 无法使用大模型 请安装llama_cpp模块'
-     print(err_msg)
+    err_msg='WeiLin-ComfyUI-prompt-all-in-one 找不到llama_cpp模块，以默认不加载本地大模型，可忽略该提示。'
+    print(err_msg)
+    # 没有模型返回空
+    def chat(question,**kwargs):
+        return "无法使用llama_cpp模块，请确保你已安装了该模块，如果没有请点击检测模块安装进行安装该模块。"
+    def chat_imagine(question,settings):
+        return chat(question,**settings)
  
 
     
