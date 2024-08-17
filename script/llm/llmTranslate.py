@@ -3,10 +3,10 @@ import requests
 import json
 import os
 import sys
-dirPath = os.path.join(os.path.dirname(__file__), "../")
+dirPath = os.path.join(os.path.dirname(__file__), "./")
 sys.path.append(dirPath)
-from llm.llm import chat,chat_imagine
-from llm.Translator import TranslatorInterface,translate_text
+from .llm import chat,chat_imagine
+from .Translator import TranslatorInterface,translate_text
 
 
 class LLMTranslator(TranslatorInterface):
