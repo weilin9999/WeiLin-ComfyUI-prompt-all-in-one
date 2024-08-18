@@ -3416,8 +3416,8 @@
     margin: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-margin);
     border-radius: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-border-radius);
     position: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-position);
-    width: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-width);
-    height: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-height);
+    min-width: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-width);
+    min-height: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-height);
     cursor: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-cursor);
     overflow: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-overflow);
     box-shadow: var(--pp-pt-gt-gb-gm-sgm-groupExtraNetwork-box-shadow)
