@@ -41,7 +41,7 @@ class WeiLinComfyUIPromptAllInOneGreat:
     CATEGORY = "WeiLin Nodes (WeiLin节点)"
 
     def encode(self, positive):
-        return (positive)
+        return (positive,)
 
 # 反向提示词 STRING
 class WeiLinComfyUIPromptAllInOneNeg:
@@ -72,7 +72,7 @@ class WeiLinComfyUIPromptAllInOneNeg:
     CATEGORY = "WeiLin Nodes (WeiLin节点)"
 
     def encode(self, negative):
-        return (negative)
+        return (negative,)
 
 #提示词编辑器 二合一 转 STRING
 class WeiLinPromptToString:
