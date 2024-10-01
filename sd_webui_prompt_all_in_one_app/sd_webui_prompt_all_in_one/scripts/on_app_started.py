@@ -402,7 +402,7 @@ def on_app_started(_: gr.Blocks):
         if not file:
             return web.Response(status=404)
         filename=os.path.basename(file)
-        return web.FileResponse(file, content_type='text/csv',headers={"Content-Disposition": f"filename=\"{filename}\""})
+        return web.FileResponse(file)
 
     @PromptServer.instance.routes.get("/weilin/physton_prompt/styles")
     async def _styles(request):
