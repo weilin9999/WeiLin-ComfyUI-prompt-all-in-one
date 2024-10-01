@@ -5727,3 +5727,9 @@
     border: var(--ppb-bm-bb-bg-groupContent-border);
     color: var(--ppb-bm-bb-bg-groupContent-color);
 }
+
+.strInfo {
+    display: inline-block !important;
+    word-break: break-all !important;
+    white-space: normal !important;
+}

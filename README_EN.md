@@ -6,6 +6,15 @@
 
 # Version update introduction
 
+> 3.6.5 Version Introduction
+>
+> 1. Fixed Issue: lora's message note is too long, the ui will be stretched and cannot see the content on the right √
+> 2. Fixed Issue: tagcomplete in translation Settings could not be used, red letter popped up in the upper right corner, csv file is fine, √ can be used in webui
+> 3. Fixed Issue: AttributeError: module 'ctypes' has no attribute 'windll' (Linux language judgment) √
+> 4. Fixed the feature: Update will no longer overwrite added Tag information √
+> 5. Added the function of shortcut calling the global window
+> 6. Added function: Global Paste board preview
+
 > 3.6.1 Version Introduction
 >
 > 1. Fixed known bugs

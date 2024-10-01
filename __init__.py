@@ -1,6 +1,5 @@
 
 import re
-import random
 from .sd_webui_prompt_all_in_one_app import launch
 import os
 import pkg_resources
@@ -9,7 +8,8 @@ import folder_paths
 import comfy.utils
 import logging
 import re
-import ctypes
+import locale
+import shutil
 
 
 # 正向提示词 STRING
@@ -395,6 +395,7 @@ def install_requirements(requirements_file_path):
                 print(e)
                 print(f'[错误]: Failed to install {package}, something may not work.')
 
+
 #安装原APP依赖
 print('WeiLinComfyUIPromptAllInOne 请求安装依赖中.......')
 loadErr = 0
@@ -406,6 +407,7 @@ except:
 if loadErr == 0:
     print('WeiLinComfyUIPromptAllInOne 请求安装依赖成功 =======')
 
+
 # 启动原APP
 from .sd_webui_prompt_all_in_one_app.app import app_start
 app_start()
@@ -416,6 +418,34 @@ loraInfoApp()
 # 启动LLM大模型路由
 from .script.llm_server import runLLMServerAPP 
 runLLMServerAPP()
+
+
+def copy_folder(source_folder, destination_folder):
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+
+    for item in os.listdir(source_folder):
+        source = os.path.join(source_folder, item)
+        destination = os.path.join(destination_folder, item)
+
+        if os.path.isdir(source):
+            copy_folder(source, destination)
+        else:
+            shutil.copy2(source, destination)
+
+
+# 检测Tag组是否存在，不存在则复制模板
+dir = os.path.join(os.path.dirname(__file__),'./group_tags/')
+filenames=os.listdir(dir)
+try:
+    filenames.remove(".gitignore")
+except:
+    None
+if len(filenames) <= 0:
+    dirDes = os.path.join(os.path.dirname(__file__),'./templete/')
+    copy_folder(dirDes, dir)
+
+
 
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
@@ -431,9 +461,8 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {}
 
 # 检测系统语言
-dll_h = ctypes.windll.kernel32
-windowLocal = (hex(dll_h.GetSystemDefaultUILanguage()))
-if windowLocal == '0xC04' or windowLocal == '0x804' or windowLocal == '0x404':
+localLan = locale.getdefaultlocale()[0]
+if localLan == "zh_CN":
     NODE_DISPLAY_NAME_MAPPINGS = {
         "WeiLinPromptToString": "WeiLin 二合一提示词转String",
         "WeiLinComfyUIPromptToLoras": "WeiLin 二合一提示词Lora自动加载",

@@ -6,6 +6,15 @@
 
 # 版本更新介绍
 
+> 3.6.5 版本介绍
+>
+> 1. 修复了 Issue：lora 的信息备注太长 ui 会被拉长看不到右边内容 √
+> 2. 修复了 Issue：翻译设置里的 tagcomplete 无法使用，右上角弹出红字，csv 文件是没问题的，在 webui 的时候可以用 √
+> 3. 修复了 Issue：AttributeError: module 'ctypes' has no attribute 'windll'（Linux 下语言判断） √
+> 4. 修复了功能：更新不会再覆盖添加过的 Tag 信息 √
+> 5. 新增了功能：快捷呼出全局窗口
+> 6. 新增了功能：全局粘贴板预览
+
 > 3.6.1 版本介绍
 >
 > 1. 修复了已知 BUG
