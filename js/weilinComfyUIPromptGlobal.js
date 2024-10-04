@@ -21,21 +21,17 @@ app.registerExtension({
         localStorage.setItem("weilin_prompt_ui_is_window", 'no')
         getIsWindowMode = 'no'
     }
-    // 加载设置
-    app.ui.settings.addSetting({
-        id: "weilin.prompt_global.changeClose",
-        name: "WeiLin PromptUI -- 调整PromptUI的关闭按钮在右边 Change PromptUI close button is on the right",
-        type: "boolean",
-		defaultValue: getSettingChangUI,
-		onChange: function(value) {
-            localStorage.setItem("weilin_prompt_ui_change_close",value)
-            getSettingChangUI = value
-            for (let index = 0; index < window.length; index++) {
-                window[index].postMessage({handel: 'changeSettingWeilinPromptUIChangeClose',value:value }, "*");
-            }
-        }
-    });
+    let getSettingDisplayGlobal = localStorage.getItem("weilin_prompt_ui_setting_display_global_shapere")
+    if(getSettingDisplayGlobal == null || getSettingDisplayGlobal.length <= 0){
+        localStorage.setItem("weilin_prompt_ui_setting_display_global_shapere",true)
+        getSettingDisplayGlobal = true
+    }
 
+    let getSettingDisplayGlobalKeyWord = localStorage.getItem("weilin_prompt_ui_setting_display_global_keyword")
+    if(getSettingDisplayGlobalKeyWord == null || getSettingDisplayGlobalKeyWord.length <= 0){
+        localStorage.setItem("weilin_prompt_ui_setting_display_global_keyword","ctrl+alt+w")
+        getSettingDisplayGlobalKeyWord = "ctrl+alt+w"
+    }
 
     // 全局唯一
     const style = document.createElement("style");
@@ -172,6 +168,7 @@ app.registerExtension({
         .weilin-option-buttons {
             display: flex;
             gap: 10px;
+            flex-direction: column;
         }
 
         .weilin-option-btn{
@@ -181,6 +178,7 @@ app.registerExtension({
             border-radius: 5px;
             color: #fff;
             cursor: pointer;
+            margin-left: 5px;
         }
     `;
     document.head.appendChild(style)
@@ -194,6 +192,13 @@ app.registerExtension({
     `
     floatingWindowBox.className = "weilin_global_floating_window"
     floatingWindowBox.id = "weilin_global_floating_window"
+
+    if(getSettingDisplayGlobal == "false"){
+        floatingWindowBox.style.display = "none";
+    }else{
+        floatingWindowBox.style.display = "flex";
+    }
+
     document.body.appendChild(floatingWindowBox);
 
     // 小浮窗JavaScript
@@ -203,6 +208,37 @@ app.registerExtension({
     script.text = `
         const weilin_box = document.getElementById('weilin_global_floating_window')
         weilin_dragElement(weilin_box);
+        // 组合键监听
+
+        // 解析键组合
+        function parseKeyCombo(keyCombo) {
+            return keyCombo.toLowerCase().split('+');
+        }
+
+        // 检查当前按键状态是否匹配键组合
+        function isKeyComboPressed(e, keyCombo) {
+            const pressedKeys = parseKeyCombo(keyCombo);
+            for (const key of pressedKeys) {
+                if (key === 'ctrl' && !e.ctrlKey) return false;
+                if (key === 'shift' && !e.shiftKey) return false;
+                if (key === 'alt' && !e.altKey) return false;
+                if (key.length === 1 && e.key.toLowerCase() !== key) return false;
+            }
+            return true;
+        }
+
+        // 键盘监听器
+        document.addEventListener('keydown', function(e) {
+            var a = localStorage.getItem("weilin_prompt_ui_setting_display_global_keyword");
+            if(a.length > 0){
+                if (isKeyComboPressed(e, a)) {
+                    event.preventDefault();
+                    const evt = new CustomEvent("openWeilinGlobalPromptBox", {"detail":{"open":true}});
+                    document.dispatchEvent(evt);
+                }
+            }
+        });
+
         function weilin_dragElement(elmnt) {
             var weilin_pos1 = 0, weilin_pos2 = 0, weilin_pos3 = 0, weilin_pos4 = 0;
 
@@ -261,8 +297,14 @@ app.registerExtension({
     globalPastWindowBox.innerHTML = `
         <div style="font-size: 13px;color: #fff;padding-bottom: 5px;">WeiLin全局提示词</div>
         <div class="weilin-option-buttons">
-            <div class="weilin-option-btn" id="weilin_positiveButton">替换为正向提示词</div>
-            <div class="weilin-option-btn" id="weilin_negativeButton">替换为反向提示词</div>
+            <div style="display: flex;flex-direction: row;align-items: center;">
+                <textarea readonly id="weilin_pastmask_post_textarea"></textarea>
+                <div class="weilin-option-btn" id="weilin_positiveButton">替换为正向提示词</div>
+            </div>
+            <div style="display: flex;flex-direction: row;align-items: center;">
+                <textarea readonly id="weilin_pastmask_neg_textarea"></textarea>
+                <div class="weilin-option-btn" id="weilin_negativeButton">替换为反向提示词</div>
+            </div>
         </div>
     `
     globalPastWindowBox.className = "weilin-floating-button"
@@ -274,16 +316,23 @@ app.registerExtension({
     globalPastScript.type = "text/javascript";
     globalPastScript.text = `
         const floatingButton = document.getElementById('weilinFloatingButton');
+        const pastposTextarea = document.getElementById('weilin_pastmask_post_textarea');
+        const pastnegTextarea = document.getElementById('weilin_pastmask_neg_textarea');
         let activeTextarea = null;
         let isFloatingButtonVisible = false;
 
         function findTextarea(event) {
-            return document.elementFromPoint(event.clientX, event.clientY).closest('textarea');
+            const textarea = document.elementFromPoint(event.clientX, event.clientY).closest('textarea')
+            //console.log(textarea.id)
+            return textarea;
         }
 
         function showFloatingButton(event) {
+            const tempShow = localStorage.getItem("weilin_prompt_ui_setting_display_global_shapere")
+            if(tempShow == "false"){return;}
+            activeTextarea = findTextarea(event);
+            if(activeTextarea.id == "weilin_pastmask_post_textarea" || activeTextarea.id == "weilin_pastmask_neg_textarea"){return}
             if (!isFloatingButtonVisible) {
-                activeTextarea = findTextarea(event);
                 if (activeTextarea) {
                     floatingButton.style.display = 'flex';
                     floatingButton.style.top = event.clientY + 'px';
@@ -294,14 +343,22 @@ app.registerExtension({
                     const negativeButton = document.getElementById('weilin_negativeButton');
                     positiveButton.style.display="block"
                     negativeButton.style.display="block"
+                    pastposTextarea.style.display="block"
+                    pastnegTextarea.style.display="block"
 
                     let thisInputGreatElement = document.getElementById("weilin_global_great_prompt_input")
                     let thisInputNegElement = document.getElementById("weilin_global_neg_prompt_input")
                     if(thisInputGreatElement.value.length <= 0){
+                        pastposTextarea.style.display="none"
                         positiveButton.style.display="none"
+                    }else{
+                        pastposTextarea.value = thisInputGreatElement.value
                     }
                     if(thisInputNegElement.value.length <= 0){
+                        pastnegTextarea.style.display="none"
                         negativeButton.style.display="none"
+                    }else{
+                        pastnegTextarea.value = thisInputNegElement.value
                     }
 
                     positiveButton.addEventListener('click', function () {
@@ -460,6 +517,55 @@ app.registerExtension({
         `
         document.body.appendChild(draggScript);
     }
+
+    // 加载设置
+    // 获取浏览器的语言
+    const local_lang = navigator.language
+
+    app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.窗口设置.3":"weilin.Window Setting.3",
+        name: local_lang == "zh-CN" ? "设置全局编辑器弹出快捷键":"Set the global editor pop-up shortcut key",
+        type: "input",
+        tooltip: local_lang == "zh-CN" ?"请使用“+”号进行组合快捷键":"Please use “+” for combination shortcuts",
+		defaultValue: "ctrl+alt+w",
+		onChange: function(value) {
+            localStorage.setItem("weilin_prompt_ui_setting_display_global_keyword",value)
+            // console.log(value)
+        }
+    });
+
+    app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.窗口设置.2":"weilin.Window Setting.2",
+        name: local_lang == "zh-CN" ? "显示全局悬浮球":"Displays the global levitating sphere",
+        type: "boolean",
+		defaultValue: getSettingDisplayGlobal,
+		onChange: function(value) {
+            localStorage.setItem("weilin_prompt_ui_setting_display_global_shapere",value)
+            getSettingDisplayGlobal = value
+            const temp_weilin_box = document.getElementById('weilin_global_floating_window');
+            // console.log(temp_weilin_box)
+            if(value == false){
+                temp_weilin_box.style.display = "none";
+            }else{
+                temp_weilin_box.style.display = "flex";
+            }
+        }
+    });
+    
+    app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.窗口设置.1":"weilin.Window Setting.1",
+        name: local_lang == "zh-CN" ? "调整PromptUI的关闭按钮在右边":"Change PromptUI close button is on the right",
+        type: "boolean",
+		defaultValue: getSettingChangUI,
+		onChange: function(value) {
+            localStorage.setItem("weilin_prompt_ui_change_close",value)
+            getSettingChangUI = value
+            for (let index = 0; index < window.length; index++) {
+                window[index].postMessage({handel: 'changeSettingWeilinPromptUIChangeClose',value:value }, "*");
+            }
+        }
+    });
+   
 
   },
   async setup(app) {

@@ -324,194 +324,173 @@ function initComplete() {
 	};
 
 	TextAreaAutoComplete.globalSeparator = localStorage.getItem(id + ".AutoSeparate") ?? ", ";
-	const enabledSetting = app.ui.settings.addSetting({
-		id,
-		name: "WeiLin 提示词补全设置 Text Autocomplete",
+	const local_lang = navigator.language
+		
+	app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.提示词补全设置.7":"weilin.Text Autocomplete Setting.7",
+        name: local_lang == "zh-CN" ? "管理自定义词汇（很卡不建议打开）":"Manage Custom Words",
 		defaultValue: true,
 		type: (name, setter, value) => {
-			return $el("tr", [
-				$el("td", [
-					$el("label", {
-						for: id.replaceAll(".", "-"),
-						textContent: name,
-					}),
-				]),
-				$el("td", [
-					$el(
-						"label",
-						{
-							textContent: "启用 Enabled ",
-							style: {
-								display: "block",
-							},
-						},
-						[
-							$el("input", {
-								id: id.replaceAll(".", "-"),
-								type: "checkbox",
-								checked: value,
-								onchange: (event) => {
-									const checked = !!event.target.checked;
-									TextAreaAutoComplete.enabled = checked;
-									setter(checked);
-								},
-							}),
-						]
-					),
-					$el(
-						"label.comfy-tooltip-indicator",
-						{
-							title: "This requires other ComfyUI nodes/extensions that support using LoRAs in the prompt.",
-							textContent: "Loras 启用 Loras enabled ",
-							style: {
-								display: "block",
-							},
-						},
-						[
-							$el("input", {
-								type: "checkbox",
-								checked: !!TextAreaAutoComplete.lorasEnabled,
-								onchange: (event) => {
-									const checked = !!event.target.checked;
-									TextAreaAutoComplete.lorasEnabled = checked;
-									toggleLoras();
-									localStorage.setItem(id + ".ShowLoras", TextAreaAutoComplete.lorasEnabled);
-								},
-							}),
-						]
-					),
-					$el(
-						"label",
-						{
-							textContent: "自动逗号 Auto-insert comma ",
-							style: {
-								display: "block",
-							},
-						},
-						[
-							$el("input", {
-								type: "checkbox",
-								checked: !!TextAreaAutoComplete.globalSeparator,
-								onchange: (event) => {
-									const checked = !!event.target.checked;
-									TextAreaAutoComplete.globalSeparator = checked ? ", " : "";
-									localStorage.setItem(id + ".AutoSeparate", TextAreaAutoComplete.globalSeparator);
-								},
-							}),
-						]
-					),
-					$el(
-						"label",
-						{
-							textContent: "将_替换为空格 Replace _ with space ",
-							style: {
-								display: "block",
-							},
-						},
-						[
-							$el("input", {
-								type: "checkbox",
-								checked: !!TextAreaAutoComplete.replacer,
-								onchange: (event) => {
-									const checked = !!event.target.checked;
-									TextAreaAutoComplete.replacer = checked ? (v) => v.replaceAll("_", " ") : undefined;
-									localStorage.setItem(id + ".ReplaceUnderscore", checked);
-								},
-							}),
-						]
-					),
-					$el(
-						"label",
-						{
-							textContent: "插入方式 Insert suggestion on: ",
-							style: {
-								display: "block",
-							},
-						},
-						[
-							$el(
-								"label",
-								{
-									textContent: "Tab 按键",
-									style: {
-										display: "block",
-										marginLeft: "20px",
-									},
-								},
-								[
-									$el("input", {
-										type: "checkbox",
-										checked: !!TextAreaAutoComplete.insertOnTab,
-										onchange: (event) => {
-											const checked = !!event.target.checked;
-											TextAreaAutoComplete.insertOnTab = checked;
-											localStorage.setItem(id + ".InsertOnTab", checked);
-										},
-									}),
-								]
-							),
-							$el(
-								"label",
-								{
-									textContent: "Enter 按键",
-									style: {
-										display: "block",
-										marginLeft: "20px",
-									},
-								},
-								[
-									$el("input", {
-										type: "checkbox",
-										checked: !!TextAreaAutoComplete.insertOnEnter,
-										onchange: (event) => {
-											const checked = !!event.target.checked;
-											TextAreaAutoComplete.insertOnEnter = checked;
-											localStorage.setItem(id + ".InsertOnEnter", checked);
-										},
-									}),
-								]
-							),
-						]
-					),
-					$el(
-						"label",
-						{
-							textContent: "最大显示条数 Max suggestions: ",
-							style: {
-								display: "block",
-							},
-						},
-						[
-							$el("input", {
-								type: "number",
-								value: +TextAreaAutoComplete.suggestionCount,
-								style: {
-									width: "80px"
-								},
-								onchange: (event) => {
-									const value = +event.target.value;
-									TextAreaAutoComplete.suggestionCount = value;;
-									localStorage.setItem(id + ".SuggestionCount", TextAreaAutoComplete.suggestionCount);
-								},
-							}),
-						]
-					),
-					$el("button", {
-						textContent: "管理自定义词汇（很卡不建议打开） Manage Custom Words",
-						onclick: () => {
-							app.ui.settings.element.close();
-							new CustomWordsDialog().show();
-						},
+			return $el("button", {
+				textContent: "管理自定义词汇（很卡不建议打开） Manage Custom Words",
+				onclick: () => {
+					app.ui.settings.element.close();
+					new CustomWordsDialog().show();
+				},
+				style: {
+					fontSize: "14px",
+					display: "block",
+					marginTop: "5px",
+				},
+			})
+		}
+    });
+
+	app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.提示词补全设置.6":"weilin.Text Autocomplete Setting.6",
+        name: local_lang == "zh-CN" ? "最大显示条数":"Max suggestions",
+		defaultValue: true,
+		type: (name, setter, value) => {
+			return $el("input", {
+				type: "number",
+				value: +TextAreaAutoComplete.suggestionCount,
+				style: {
+					width: "80px"
+				},
+				onchange: (event) => {
+					const value = +event.target.value;
+					TextAreaAutoComplete.suggestionCount = value;;
+					localStorage.setItem(id + ".SuggestionCount", TextAreaAutoComplete.suggestionCount);
+				},
+			})
+		}
+    });
+
+	app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.提示词补全设置.5":"weilin.Text Autocomplete Setting.5",
+        name: local_lang == "zh-CN" ? "插入方式":"Insert suggestion on",
+		defaultValue: true,
+		type: (name, setter, value) => {
+			return $el(
+				"label",
+				{},[
+				$el(
+					"label",
+					{
+						textContent: "Tab 按键",
 						style: {
-							fontSize: "14px",
 							display: "block",
-							marginTop: "5px",
+							marginLeft: "20px",
 						},
-					}),
-				]),
-			]);
-		},
-	});
+					},
+					[
+						$el("input", {
+							type: "checkbox",
+							checked: !!TextAreaAutoComplete.insertOnTab,
+							onchange: (event) => {
+								const checked = !!event.target.checked;
+								TextAreaAutoComplete.insertOnTab = checked;
+								localStorage.setItem(id + ".InsertOnTab", checked);
+							},
+						}),
+					]
+				),
+				$el(
+					"label",
+					{
+						textContent: "Enter 按键",
+						style: {
+							display: "block",
+							marginLeft: "20px",
+						},
+					},
+					[
+						$el("input", {
+							type: "checkbox",
+							checked: !!TextAreaAutoComplete.insertOnEnter,
+							onchange: (event) => {
+								const checked = !!event.target.checked;
+								TextAreaAutoComplete.insertOnEnter = checked;
+								localStorage.setItem(id + ".InsertOnEnter", checked);
+							},
+						}),
+					]
+				)
+			])
+		}
+    });
+
+	app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.提示词补全设置.4":"weilin.Text Autocomplete Setting.4",
+        name: local_lang == "zh-CN" ? `将"_"替换为空格`:`Replace "_" with space`,
+		defaultValue: true,
+		type: (name, setter, value) => {
+			return $el("input", {
+				type: "checkbox",
+				checked: !!TextAreaAutoComplete.replacer,
+				onchange: (event) => {
+					const checked = !!event.target.checked;
+					TextAreaAutoComplete.replacer = checked ? (v) => v.replaceAll("_", " ") : undefined;
+					localStorage.setItem(id + ".ReplaceUnderscore", checked);
+				},
+			})
+		}
+    });
+	
+	app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.提示词补全设置.3":"weilin.Text Autocomplete Setting.3",
+        name: local_lang == "zh-CN" ? "自动逗号":"Auto-insert comma",
+		defaultValue: true,
+		type: (name, setter, value) => {
+			return $el("input", {
+				type: "checkbox",
+				checked: !!TextAreaAutoComplete.globalSeparator,
+				onchange: (event) => {
+					const checked = !!event.target.checked;
+					TextAreaAutoComplete.globalSeparator = checked ? ", " : "";
+					localStorage.setItem(id + ".AutoSeparate", TextAreaAutoComplete.globalSeparator);
+				},
+			})
+		}
+    });
+
+	app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.提示词补全设置.2":"weilin.Text Autocomplete Setting.2",
+        name: local_lang == "zh-CN" ? "Loras 启用":"Loras enabled",
+		tooltip: local_lang == "zh-CN" ? "这需要支持在提示符中使用lora的其他ComfyUI节点/扩展。":"This requires other ComfyUI nodes/extensions that support using LoRAs in the prompt.",
+		defaultValue: true,
+		type: (name, setter, value) => {
+			return $el("input", {
+				type: "checkbox",
+				checked: !!TextAreaAutoComplete.lorasEnabled,
+				onchange: (event) => {
+					const checked = !!event.target.checked;
+					TextAreaAutoComplete.lorasEnabled = checked;
+					toggleLoras();
+					localStorage.setItem(id + ".ShowLoras", TextAreaAutoComplete.lorasEnabled);
+				},
+			})
+		}
+    });
+
+	const enabledSetting =  app.ui.settings.addSetting({
+        id: local_lang == "zh-CN" ? "weilin.提示词补全设置.1":"weilin.Text Autocomplete Setting.1",
+        name: local_lang == "zh-CN" ? "启用":"Enabled",
+		defaultValue: true,
+		type: (name, setter, value) => {
+			return $el("input", {
+				id: id.replaceAll(".", "-"),
+				type: "checkbox",
+				checked: value,
+				onchange: (event) => {
+					const checked = !!event.target.checked;
+					TextAreaAutoComplete.enabled = checked;
+					setter(checked);
+
+				},
+			})
+		}
+    });
 
 	TextAreaAutoComplete.enabled = enabledSetting.value;
 	TextAreaAutoComplete.replacer = localStorage.getItem(id + ".ReplaceUnderscore") === "true" ? (v) => v.replaceAll("_", " ") : undefined;

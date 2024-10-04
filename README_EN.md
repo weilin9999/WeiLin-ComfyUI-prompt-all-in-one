@@ -4,7 +4,25 @@
 
 </div>
 
+# Author Statement
+
+Due to limited personal time, the frequency of updating plug-ins will not be very high, occasionally free may update once, each update as far as possible to meet the proposed needs, generally no big BUG basically update frequency is not high, 2~5 a month, thank you for your use and support of this plug-in. You can submit an Issue or you can submit your Request to help update this plugin.
+
 # Version update introduction
+
+> Last updated: 2024-10-04
+
+> 3.6.8 Version Introduction
+>
+> 1. New - Global shortcut key (Set the default to CTRL+ALT+W in ComfyUI Settings to call the global editor)
+> 2. New - Floating ball hiding Settings
+> 3. Modification - Settings interface optimization ADAPTS to the new UI of the new version of ComfyUI
+
+<details>
+
+<summary>
+Click here for more updates from the past
+</summary>
 
 > 3.6.5 Version Introduction
 >
@@ -42,6 +60,8 @@
 
 > 2.2.0 Version </br>1. Fixed known bug</br>2. Updated with new features: Global Prompt UI, Enlarge Window function
 
+</details>
+
 # Lora tips Word writing tips
 
 <lora:xxxx:0.3:0.4> This formulation explains that 0.3 is the model strength and 0.4 is the CLIP strength
@@ -68,6 +88,10 @@ Use it as follows
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/2.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/3.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/4.png)
+
+# Plugin Settings preview
+
+![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/5.png)
 
 # WeiLin-ComfyUI-Prompt-all-in-one Reference project
 

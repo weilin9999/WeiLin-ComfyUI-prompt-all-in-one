@@ -4,7 +4,22 @@
 
 </div>
 
+# 作者声明
+
+由于个人时间有限，更新插件的频率并不会很高，偶尔有空或许会更新一次，每次更新尽量满足所提出的需求，一般没有大的 BUG 基本上更新频率不高，一个月 2~5 更，感谢你对本插件的使用与支持，有需求可以提交 Issue 或者你可以提交你的 Request 帮助本插件更新。
+
 # 版本更新介绍
+
+> 最新更新：2024-10-04
+
+> 3.6.8 版本介绍
+>
+> 1. 新增-全局快捷键（在 ComfyUI 设置中配置 默认为 CTRL+ALT+W 呼唤出全局编辑器）
+> 2. 新增-悬浮球隐藏设置
+> 3. 修改-设置界面优化适配了新版本的 ComfyUI 的新 UI
+
+<details>
+<summary>点击查看往期更多更新内容</summary>
 
 > 3.6.5 版本介绍
 >
@@ -46,6 +61,8 @@
 
 > 2.2.0 版本介绍 </br>1. 修复了已知 BUG</br>2. 更新了新的功能：全局提示词 UI、放大窗口功能
 
+</details>
+
 # Lora 提示词写法提示
 
 <lora:xxxx:0.3:0.4>这种写法解释 0.3 是模型强度 0.4 是 CLIP 强度
@@ -72,6 +89,10 @@
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/2.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/3.png)
 ![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/4.png)
+
+# 插件设置预览
+
+![](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/blob/master/step/5.png)
 
 # WeiLin-ComfyUI-Prompt-all-in-one 借鉴项目
 
