@@ -1,0 +1,14 @@
+[project]
+name = "weilin-comfyui-prompt-all-in-one"
+description = ""
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "WeiLin-ComfyUI-prompt-all-in-one"
+Icon = ""
