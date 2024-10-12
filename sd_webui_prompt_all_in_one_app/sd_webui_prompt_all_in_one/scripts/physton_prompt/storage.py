@@ -1,8 +1,11 @@
 import os
-from pathlib import Path
+import sys
 import json
 import time
 
+Path = os.path.join(os.path.dirname(__file__), "../../../")
+sys.path.append(Path)
+import launch
 
 class Storage:
     storage_path = ''
@@ -56,7 +59,6 @@ class Storage:
         if os.path.getsize(filename) == 0:
             return None
         try:
-            import launch
             if not launch.is_installed("chardet"):
                 with open(filename, 'r') as f:
                     data = json.load(f)

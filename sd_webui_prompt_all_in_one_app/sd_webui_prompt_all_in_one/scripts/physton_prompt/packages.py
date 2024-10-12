@@ -1,4 +1,3 @@
-import launch
 import sys
 import os
 
@@ -6,6 +5,10 @@ import os
 Path = os.path.dirname(__file__)
 sys.path.append(Path)
 from get_lang import get_lang
+
+Path = os.path.join(os.path.dirname(__file__), "../../../")
+sys.path.append(Path)
+import launch
 
 packages = {
     "chardet": "chardet",

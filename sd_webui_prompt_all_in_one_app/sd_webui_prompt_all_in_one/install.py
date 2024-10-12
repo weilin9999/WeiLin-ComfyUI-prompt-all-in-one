@@ -1,3 +1,8 @@
+import os 
+import sys
+appendPath = os.path.join(os.path.dirname(__file__), "../")
+sys.path.append(appendPath)
+
 import launch
 
 packages = {
