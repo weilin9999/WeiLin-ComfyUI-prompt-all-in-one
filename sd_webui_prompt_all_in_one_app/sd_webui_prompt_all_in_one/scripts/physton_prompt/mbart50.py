@@ -17,16 +17,30 @@ class Translator:
 
 
     def initialize(self,reload=False):
-        if not reload and (self.mbart_value_model is not None and self.mbart_value_tokenizer is not None):
-            print('[sd-webui-prompt-all-in-one] 模型已加载过无需再次加载 Model and tokenizer already initialized. Skipping.')
+        if  self.mbart_value_loading:
+            while not  self.mbart_value_loading:
+                time.sleep(0.1)
+                pass
+            if  self.mbart_value_model is None or  self.mbart_value_tokenizer is None:
+                raise Exception('error')
+            # raise Exception(get_lang('model_is_loading'))
+            return
+        if not reload and  self.mbart_value_model is not None:
             return
 
         self.mbart_value_loading = True
+        self.mbart_value_model = None
+        self.mbart_value_tokenizer = None
+
+        model_path = os.path.join(self.mbart_value_cache_dir, "mbart-large-50-many-to-many-mmt")
+        model_file = os.path.join(model_path, "pytorch_model.bin")
+        if os.path.exists(model_path) and os.path.exists(model_file):
+            self.mbart_value_model_name = model_path
         try:
             from transformers import MBart50TokenizerFast, MBartForConditionalGeneration
             print(f'[sd-webui-prompt-all-in-one] 离线翻译加载中 Loading model {self.mbart_value_model_name} from {self.mbart_value_cache_dir}...')
-            self.mbart_value_model = MBartForConditionalGeneration.from_pretrained(self.mbart_value_model_name, cache_dir=self.mbart_value_cache_dir, local_files_only=True, use_safetensors=True)
-            self.mbart_value_tokenizer = MBart50TokenizerFast.from_pretrained(self.mbart_value_model_name, cache_dir=self.mbart_value_cache_dir, local_files_only=True)
+            self.mbart_value_model = MBartForConditionalGeneration.from_pretrained(self.mbart_value_model_name, cache_dir=self.mbart_value_cache_dir)
+            self.mbart_value_tokenizer = MBart50TokenizerFast.from_pretrained(self.mbart_value_model_name, cache_dir=self.mbart_value_cache_dir)
             print(f'[sd-webui-prompt-all-in-one] 离线翻译初始化模型成功  {self.mbart_value_model_name} Model loaded.')
         except Exception as e:
             print(f'[sd-webui-prompt-all-in-one] 离线翻译初始化失败 {e} Model Fail')
