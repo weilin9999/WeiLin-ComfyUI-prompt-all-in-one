@@ -10,19 +10,23 @@ Due to limited personal time, the frequency of updating plug-ins will not be ver
 
 # Version update introduction
 
-> Last updated: 2024-10-04
+> Last updated: 2024-10-20
 
-> 3.6.8 Version Introduction
+> 3.6.9 Version Introduction
 >
-> 1. New - Global shortcut key (Set the default to CTRL+ALT+W in ComfyUI Settings to call the global editor)
-> 2. New - Floating ball hiding Settings
-> 3. Modification - Settings interface optimization ADAPTS to the new UI of the new version of ComfyUI
+> 1. Fixed known BUG: Offline translation model translation problem in API Settings, fixed
 
 <details>
 
 <summary>
 Click here for more updates from the past
 </summary>
+
+> 3.6.8 Version Introduction
+>
+> 1. New - Global shortcut key (Set the default to CTRL+ALT+W in ComfyUI Settings to call the global editor)
+> 2. New - Floating ball hiding Settings
+> 3. Modification - Settings interface optimization ADAPTS to the new UI of the new version of ComfyUI
 
 > 3.6.5 Version Introduction
 >

@@ -7,66 +7,56 @@ Path = os.path.dirname(__file__)
 sys.path.append(Path)
 from get_lang import get_lang
 
-model = None
-tokenizer = None
-model_name = "facebook/mbart-large-50-many-to-many-mmt"
-cache_dir = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + '/../../models')
-loading = False
+class Translator:
+    def __init__(self):
+        self.mbart_value_model = None
+        self.mbart_value_tokenizer = None
+        self.mbart_value_model_name = "facebook/mbart-large-50-many-to-many-mmt"
+        self.mbart_value_cache_dir = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + '/../../../../models') 
+        self.mbart_value_loading = False
 
-def initialize(reload=False):
-    global model, tokenizer, model_name, cache_dir, loading
-    if loading:
-        while not loading:
-            time.sleep(0.1)
-            pass
-        if model is None or tokenizer is None:
-            raise Exception('error')
-        # raise Exception(get_lang('model_is_loading'))
-        return
-    if not reload and model is not None:
-        return
-    loading = True
-    model = None
-    tokenizer = None
 
-    model_path = os.path.join(cache_dir, "mbart-large-50-many-to-many-mmt")
-    model_file = os.path.join(model_path, "pytorch_model.bin")
-    if os.path.exists(model_path) and os.path.exists(model_file):
-        model_name = model_path
+    def initialize(self,reload=False):
+        if not reload and (self.mbart_value_model is not None and self.mbart_value_tokenizer is not None):
+            print('[sd-webui-prompt-all-in-one] 模型已加载过无需再次加载 Model and tokenizer already initialized. Skipping.')
+            return
 
-    try:
-        from transformers import MBart50TokenizerFast, MBartForConditionalGeneration
-        print(f'[sd-webui-prompt-all-in-one] Loading model {model_name} from {cache_dir}...')
-        model = MBartForConditionalGeneration.from_pretrained(model_name, cache_dir=cache_dir)
-        tokenizer = MBart50TokenizerFast.from_pretrained(model_name, cache_dir=cache_dir)
-        print(f'[sd-webui-prompt-all-in-one] Model {model_name} loaded.')
-        loading = False
-    except Exception as e:
-        loading = False
-        raise e
+        self.mbart_value_loading = True
+        try:
+            from transformers import MBart50TokenizerFast, MBartForConditionalGeneration
+            print(f'[sd-webui-prompt-all-in-one] 离线翻译加载中 Loading model {self.mbart_value_model_name} from {self.mbart_value_cache_dir}...')
+            self.mbart_value_model = MBartForConditionalGeneration.from_pretrained(self.mbart_value_model_name, cache_dir=self.mbart_value_cache_dir, local_files_only=True, use_safetensors=True)
+            self.mbart_value_tokenizer = MBart50TokenizerFast.from_pretrained(self.mbart_value_model_name, cache_dir=self.mbart_value_cache_dir, local_files_only=True)
+            print(f'[sd-webui-prompt-all-in-one] 离线翻译初始化模型成功  {self.mbart_value_model_name} Model loaded.')
+        except Exception as e:
+            print(f'[sd-webui-prompt-all-in-one] 离线翻译初始化失败 {e} Model Fail')
+            raise e
+        finally:
+            self.mbart_value_loading = False
+            # print(f'[sd-webui-prompt-all-in-one] Initialization complete. model: {mbart_value_model}, tokenizer: {mbart_value_tokenizer}')
 
-def translate(text, src_lang, target_lang):
-    global model, tokenizer
 
-    if not text:
-        if isinstance(text, list):
-            return []
-        else:
-            return ''
+    def translate(self,text, src_lang, target_lang):
+        # print(self.mbart_value_model,self.mbart_value_tokenizer)
+        if not text:
+            if isinstance(text, list):
+                return []
+            else:
+                return ''
 
-    if model is None:
-        raise Exception(get_lang('model_not_initialized'))
+        if self.mbart_value_model is None:
+            raise Exception(get_lang('model_not_initialized'))
 
-    if tokenizer is None:
-        raise Exception(get_lang('model_not_initialized'))
+        if self.mbart_value_tokenizer is None:
+            raise Exception(get_lang('model_not_initialized'))
 
-    if src_lang == target_lang:
-        return text
+        if src_lang == target_lang:
+            return text
 
-    tokenizer.src_lang = src_lang
-    encoded_input = tokenizer(text, return_tensors="pt", padding=True)
-    generated_tokens = model.generate(
-        **encoded_input, forced_bos_token_id=tokenizer.lang_code_to_id[target_lang],
-        max_new_tokens=500
-    )
-    return tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+        self.mbart_value_tokenizer.src_lang = src_lang
+        encoded_input = self.mbart_value_tokenizer(text, return_tensors="pt", padding=True)
+        generated_tokens = self.mbart_value_model.generate(
+            **encoded_input, forced_bos_token_id=self.mbart_value_tokenizer.lang_code_to_id[target_lang],
+            max_new_tokens=500
+        )
+        return self.mbart_value_tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)

@@ -31,7 +31,7 @@ from translator.mbart50_translator import MBart50Translator
 caches = {}
 
 
-def translate(text, from_lang, to_lang, api, api_config=None):
+def translate(text, from_lang, to_lang, api, api_config=None, llmModel = None):
     if api_config is None:
         api_config = {}
     global caches
@@ -121,12 +121,13 @@ def translate(text, from_lang, to_lang, api, api_config=None):
         elif api == 'iflytekV2':
             translator = IflytekV2Translator()
         elif api == 'mbart50':
-            translator = MBart50Translator()
+            translator = MBart50Translator(llmModel)
         elif 'type' in find and find['type'] == 'translators':
             translator = TranslatorsTranslator(api)
             translator.set_translator(find['translator'])
         else:
             return _translate_result(False, get_lang('translate_api_not_support'), '')
+        # print(api)
 
         translator.set_from_lang(from_lang)
         translator.set_to_lang(to_lang)

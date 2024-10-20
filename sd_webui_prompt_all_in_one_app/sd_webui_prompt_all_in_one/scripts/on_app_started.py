@@ -24,7 +24,7 @@ from physton_prompt.packages import get_packages_state, install_package, get_llm
 from physton_prompt.gen_openai import gen_openai
 from physton_prompt.get_lang import get_lang
 from physton_prompt.get_version import get_git_commit_version, get_git_remote_versions, get_latest_version
-from physton_prompt.mbart50 import initialize as mbart50_initialize, translate as mbart50_translate
+from physton_prompt.mbart50 import Translator as mbart50_translator
 from physton_prompt.get_group_tags import get_group_tags
 from physton_prompt.get_group_tags import addGroupTag
 from physton_prompt.get_group_tags import editGroupTag
@@ -73,6 +73,7 @@ except Exception as e:
 def on_app_started(_: gr.Blocks):
     st = Storage()
     hi = History()
+    localLLMTransaltor=None
 
     @PromptServer.instance.routes.get("/weilin/physton_prompt/get_version")
     async def _get_version(request):
@@ -374,7 +375,7 @@ def on_app_started(_: gr.Blocks):
             return  web.json_response({"success": False, "message": get_lang('is_required', {'0': 'api'})})
         if 'api_config' not in data:
             return  web.json_response({"success": False, "message": get_lang('is_required', {'0': 'api_config'})})
-        return  web.json_response(translate(data['text'], data['from_lang'], data['to_lang'], data['api'], data['api_config']))
+        return  web.json_response(translate(data['text'], data['from_lang'], data['to_lang'], data['api'], data['api_config'],localLLMTransaltor))
 
     @PromptServer.instance.routes.post("/weilin/physton_prompt/translates")
     async def _translates(request):
@@ -389,7 +390,7 @@ def on_app_started(_: gr.Blocks):
             return  web.json_response({"success": False, "message": get_lang('is_required', {'0': 'api'})})
         if 'api_config' not in data:
             return  web.json_response({"success": False, "message": get_lang('is_required', {'0': 'api_config'})})
-        return  web.json_response(translate(data['texts'], data['from_lang'], data['to_lang'], data['api'], data['api_config']))
+        return  web.json_response(translate(data['texts'], data['from_lang'], data['to_lang'], data['api'], data['api_config'],localLLMTransaltor))
 
     @PromptServer.instance.routes.get("/weilin/physton_prompt/get_csvs")
     async def _get_csvs(request):
@@ -435,8 +436,12 @@ def on_app_started(_: gr.Blocks):
 
     @PromptServer.instance.routes.post("/weilin/physton_prompt/mbart50_initialize")
     async def _mbart50_initialize(request):
+        nonlocal localLLMTransaltor
         try:
-            mbart50_initialize(True)
+            if localLLMTransaltor == None:
+                localLLMTransaltor = mbart50_translator()
+            
+            localLLMTransaltor.initialize(True)
             return web.json_response({"success": True})
         except Exception as e:
             return web.json_response({"success": False, 'message': str(e)})
@@ -547,8 +552,9 @@ def on_app_started(_: gr.Blocks):
 
     try:
         translate_api = st.get('translateApi')
+        # print(translate_api)
         if translate_api == 'mbart50':
-            mbart50_initialize()
+            localLLMTransaltor = mbart50_translator()
     except Exception:
         pass
 

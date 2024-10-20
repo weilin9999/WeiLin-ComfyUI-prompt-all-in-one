@@ -7,12 +7,13 @@ sys.path.append(Path)
 
 from translator.base_tanslator import BaseTranslator
 from get_lang import get_lang
-from mbart50 import initialize as mbart50_initialize, translate as mbart50_translate
+from mbart50 import Translator as mbar_tra
 
 
 class MBart50Translator(BaseTranslator):
-    def __init__(self):
+    def __init__(self,localModel):
         super().__init__('mbart50')
+        self.llmModel = localModel
 
     def translate(self, text):
         if not text:
@@ -20,8 +21,8 @@ class MBart50Translator(BaseTranslator):
                 return []
             else:
                 return ''
-
-        result = mbart50_translate(text=text, src_lang=self.from_lang, target_lang=self.to_lang)
+        
+        result = self.llmModel.translate(text=text, src_lang=self.from_lang, target_lang=self.to_lang)
         if not result:
             raise Exception(get_lang('response_is_empty', {'0': 'mbart50'}))
 
