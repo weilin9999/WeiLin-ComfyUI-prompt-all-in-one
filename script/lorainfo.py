@@ -162,12 +162,21 @@ async def get_loras_info_response(request, maybe_fetch_civitai=False, maybe_fetc
   """Gets lora info for all or a single lora"""
   api_response = {'status': 200}
   lora_file = get_param(request, 'file')
-  light = not is_param_falsy(request, 'light')
+  if get_param(request, 'light') is not None:
+    light = is_param_falsy(request, 'light')
+  else:
+    light = False
   if lora_file is not None:
-    info_data = await get_model_info(lora_file,
-                                     maybe_fetch_civitai=maybe_fetch_civitai,
-                                     maybe_fetch_metadata=maybe_fetch_metadata,
-                                     light=light)
+    if light:
+      info_data = await get_model_info(lora_file,
+                                       maybe_fetch_civitai=maybe_fetch_civitai,
+                                       maybe_fetch_metadata=maybe_fetch_metadata,
+                                       light=light)
+    else:
+      info_data = await get_model_info(lora_file,
+                                       force_fetch_civitai=maybe_fetch_civitai,
+                                       force_fetch_metadata=maybe_fetch_metadata,
+                                       light=light)
     if info_data is None:
       api_response['status'] = '404'
       api_response['error'] = 'No Lora found at path'
