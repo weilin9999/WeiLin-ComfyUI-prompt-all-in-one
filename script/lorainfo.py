@@ -298,9 +298,9 @@ async def get_model_info(file: str,
   should_save = _update_data(info_data) or should_save
 
   should_fetch_civitai = force_fetch_civitai is True or (maybe_fetch_civitai is True and
-                                                         'civitai' not in info_data['raw'])
+                                                         ('civitai' not in info_data['raw'] or len(info_data['raw']['civitai']) == 0))
   should_fetch_metadata = force_fetch_metadata is True or (maybe_fetch_metadata is True and
-                                                           'metadata' not in info_data['raw'])
+                                                           ('metadata' not in info_data['raw'] or len(info_data['raw']['metadata']) == 0))
 
   if should_fetch_metadata:
     data_meta = _get_model_metadata(file,
