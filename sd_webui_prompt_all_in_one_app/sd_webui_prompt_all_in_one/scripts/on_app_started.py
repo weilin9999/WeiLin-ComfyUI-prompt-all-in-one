@@ -420,7 +420,7 @@ def on_app_started(_: gr.Blocks):
 
     @PromptServer.instance.routes.get("/weilin/physton_prompt/get_extra_networks")
     async def _get_extra_networks(request):
-        return web.json_response({"extra_networks": await get_extra_networks()})
+        return web.json_response({"extra_networks": await get_extra_networks(auto_fetch=True)})
 
     @PromptServer.instance.routes.post("/weilin/physton_prompt/gen_openai")
     async def _gen_openai(request):
