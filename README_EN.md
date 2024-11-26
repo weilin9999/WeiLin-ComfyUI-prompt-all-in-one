@@ -10,17 +10,22 @@ Due to limited personal time, the frequency of updating plug-ins will not be ver
 
 # Version update introduction
 
-> Last updated: 2024-10-20
+> Last updated: 2024-11-26
 
-> 3.6.9 Version Introduction
+> 3.6.9.1 Version Introduction (Due to my work, I have time to update the plug-in, forgive me! Thank you very much for your support of this plugin!)
 >
-> 1. Fixed known BUG: Offline translation model translation problem in API Settings, fixed
+> 1. Fixed an issue in the merge code: [#15](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/pull/15) to the modified Lora loading apis in a timeout situation in (thanks for the code contributor provides the help, Thanks to contributors for supporting this plugin, thanks to everyone who uses this plugin)
+> 2. Added a new function to load all Lora covers at the bottom of the input box, and the background can view the loading progress. This code is provided by [#15](https://github.com/weilin9999/WeiLin-ComfyUI-prompt-all-in-one/pull/15) contributor
 
 <details>
 
 <summary>
 Click here for more updates from the past
 </summary>
+
+> 3.6.9 Version Introduction
+>
+> 1. Fixed known BUG: Offline translation model translation problem in API Settings, fixed
 
 > 3.6.8 Version Introduction
 >
