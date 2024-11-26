@@ -1,7 +1,5 @@
 # -*- coding: UTF-8 -*-
-import json
 import os
-import copy
 import sys
 import folder_paths
 from PIL import Image
