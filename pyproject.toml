@@ -1,7 +1,7 @@
 [project]
 name = "weilin-comfyui-prompt-all-in-one"
 description = "WeiLin-ComfyUI-Prompt-all-in-one Write prompt words like WebUI"
-version = "1.0.0"
+version = "3.6.9.1"
 license = {file = "LICENSE"}
 
 [project.urls]
