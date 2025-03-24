@@ -8,6 +8,9 @@
 # Please note that this node no longer accepts any feedback or updates!
 ### This node is no longer updated and will be replaced by a new node. New node: [WeiLin-Comfyui-Tools](https://github.com/weilin9999/WeiLin-Comfyui-Tools) The new node will continue to update and the installation method of the new node is more convenient and better than that of the old node. The new node is not compatible with the old node, but the Tag data of the old node can be migrated to the new node. Please refer to the new node for more information!
 
+### This plugin is no longer updated! Please use the brand new plugin!
+New plugin link: [WeiLin-Comfyui-Tools](https://github.com/weilin9999/WeiLin-Comfyui-Tools)
+
 # Author Statement
 
 Due to limited personal time, the frequency of updating plug-ins will not be very high, occasionally free may update once, each update as far as possible to meet the proposed needs, generally no big BUG basically update frequency is not high, 2~5 a month, thank you for your use and support of this plug-in. You can submit an Issue or you can submit your Request to help update this plugin.
